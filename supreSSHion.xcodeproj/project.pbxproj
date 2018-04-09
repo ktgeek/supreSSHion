@@ -13,6 +13,8 @@
 		DE3EE3BF207B923900536B64 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3BE207B923900536B64 /* main.m */; };
 		DE3EE3CA207B923A00536B64 /* supreSSHionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3C9207B923A00536B64 /* supreSSHionTests.m */; };
 		DE3EE3D5207B923A00536B64 /* supreSSHionUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3D4207B923A00536B64 /* supreSSHionUITests.m */; };
+		DE3EE3E4207BCE2900536B64 /* StatusMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E3207BCE2900536B64 /* StatusMenuController.swift */; };
+		DE3EE3E6207BD19E00536B64 /* SSHAgentCommunicator.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E5207BD19E00536B64 /* SSHAgentCommunicator.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,10 @@
 		DE3EE3D0207B923A00536B64 /* supreSSHionUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = supreSSHionUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE3EE3D4207B923A00536B64 /* supreSSHionUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = supreSSHionUITests.m; sourceTree = "<group>"; };
 		DE3EE3D6207B923A00536B64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DE3EE3E2207BCE2900536B64 /* supreSSHion-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "supreSSHion-Bridging-Header.h"; sourceTree = "<group>"; };
+		DE3EE3E3207BCE2900536B64 /* StatusMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusMenuController.swift; sourceTree = "<group>"; };
+		DE3EE3E5207BD19E00536B64 /* SSHAgentCommunicator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSHAgentCommunicator.m; sourceTree = "<group>"; };
+		DE3EE3E7207BD27F00536B64 /* SSHAgentCommunicator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSHAgentCommunicator.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,9 +107,13 @@
 				DE3EE3B6207B923900536B64 /* AppDelegate.m */,
 				DE3EE3B8207B923900536B64 /* Assets.xcassets */,
 				DE3EE3BA207B923900536B64 /* MainMenu.xib */,
+				DE3EE3E3207BCE2900536B64 /* StatusMenuController.swift */,
+				DE3EE3E7207BD27F00536B64 /* SSHAgentCommunicator.h */,
+				DE3EE3E5207BD19E00536B64 /* SSHAgentCommunicator.m */,
 				DE3EE3BD207B923900536B64 /* Info.plist */,
 				DE3EE3BE207B923900536B64 /* main.m */,
 				DE3EE3C0207B923900536B64 /* supreSSHion.entitlements */,
+				DE3EE3E2207BCE2900536B64 /* supreSSHion-Bridging-Header.h */,
 			);
 			path = supreSSHion;
 			sourceTree = "<group>";
@@ -193,6 +203,12 @@
 				TargetAttributes = {
 					DE3EE3B1207B923900536B64 = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 0930;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 0;
+							};
+						};
 					};
 					DE3EE3C4207B923A00536B64 = {
 						CreatedOnToolsVersion = 9.3;
@@ -255,8 +271,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DE3EE3E4207BCE2900536B64 /* StatusMenuController.swift in Sources */,
 				DE3EE3BF207B923900536B64 /* main.m in Sources */,
 				DE3EE3B7207B923900536B64 /* AppDelegate.m in Sources */,
+				DE3EE3E6207BD19E00536B64 /* SSHAgentCommunicator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -416,7 +434,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = supreSSHion/supreSSHion.entitlements;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = supreSSHion/Info.plist;
@@ -427,6 +445,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kgarner.supreSSHion;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "supreSSHion/supreSSHion-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -434,7 +455,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = supreSSHion/supreSSHion.entitlements;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = supreSSHion/Info.plist;
@@ -445,12 +466,15 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kgarner.supreSSHion;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "supreSSHion/supreSSHion-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
 		DE3EE3DD207B923A00536B64 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -469,6 +493,7 @@
 		DE3EE3DE207B923A00536B64 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -487,6 +512,7 @@
 		DE3EE3E0207B923A00536B64 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = supreSSHionUITests/Info.plist;
@@ -504,6 +530,7 @@
 		DE3EE3E1207B923A00536B64 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = supreSSHionUITests/Info.plist;

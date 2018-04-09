@@ -1,5 +1,5 @@
 //
-//  AppDelegate.m
+//  StatusMenuController.swift
 //  supreSSHion
 //
 // MIT License
@@ -24,22 +24,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import Cocoa
 
-#import "AppDelegate.h"
-
-@interface AppDelegate ()
-
-@property (weak) IBOutlet NSMenu *statusMenu;
-@end
-
-@implementation AppDelegate
-
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    // Insert code here to initialize your application
+class StatusMenuController: NSObject {
+    @IBOutlet weak var statusMenu: NSMenu!
+    
+    let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
+    // TODO: Allow this to be configurable
+    let socketPath = ProcessInfo.processInfo.environment["SSH_AUTH_SOCK"];
+    
+    override func awakeFromNib() {
+        let icon = NSImage(named: "statusIcon")
+        icon?.isTemplate = true
+        statusItem.image = icon
+        statusItem.menu = statusMenu;
+    }
+    
+    @IBAction func quitClicked(sender: NSMenuItem) {
+        NSApplication.shared().terminate(self)
+    }
+    
+    @IBAction func removeSSHKeysClicked(_ sender: NSMenuItem) {
+        let sshAgentCommunicator: SSHAgentCommunicator = SSHAgentCommunicator(socketPath: socketPath);
+        sshAgentCommunicator.removeKeys();
+    }
 }
-
-- (void)applicationWillTerminate:(NSNotification *)aNotification {
-    // Insert code here to tear down your application
-}
-
-@end

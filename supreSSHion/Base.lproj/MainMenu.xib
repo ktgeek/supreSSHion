@@ -12,21 +12,38 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application"/>
-        <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
+        <customObject id="Voe-Tx-rLC" customClass="AppDelegate"/>
+        <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
+        <customObject id="hyF-yk-Hr7" customClass="StatusMenuController" customModule="supreSSHion" customModuleProvider="target">
             <connections>
-                <outlet property="statusMenu" destination="TcH-Lc-TPZ" id="62P-ub-j2q"/>
+                <outlet property="statusMenu" destination="TcH-Lc-TPZ" id="1cp-NE-vVl"/>
             </connections>
         </customObject>
-        <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <menu id="TcH-Lc-TPZ">
             <items>
+                <menuItem title="Preferences" id="A7Z-fY-Wec">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="Khf-r5-HnU"/>
+                <menuItem title="Remove SSH Keys" id="TRu-hy-YDe">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="removeSSHKeysClicked:" target="hyF-yk-Hr7" id="cuD-vl-LKe"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="f6T-7g-idm"/>
+                <menuItem title="About" id="yC9-B8-6tL">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="0BL-pR-V5S"/>
                 <menuItem title="Quit" id="o8n-bo-jR8">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="quitClicked:" target="Voe-Tx-rLC" id="060-Je-9MA"/>
+                        <action selector="quitClickedWithSender:" target="hyF-yk-Hr7" id="exH-Fv-tbF"/>
                     </connections>
                 </menuItem>
             </items>
+            <point key="canvasLocation" x="-1343" y="-1151"/>
         </menu>
     </objects>
 </document>

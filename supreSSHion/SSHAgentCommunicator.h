@@ -1,5 +1,5 @@
 //
-//  AppDelegate.m
+//  SSHAgentCommunicator.h
 //  supreSSHion
 //
 // MIT License
@@ -24,22 +24,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#import <Foundation/Foundation.h>
 
-#import "AppDelegate.h"
+@interface SSHAgentCommunicator : NSObject
 
-@interface AppDelegate ()
+- (id)initWithSocketPath: (NSString *)socketPath;
 
-@property (weak) IBOutlet NSMenu *statusMenu;
-@end
+@property (strong) NSString* sshAgentSocketPath;
 
-@implementation AppDelegate
-
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    // Insert code here to initialize your application
-}
-
-- (void)applicationWillTerminate:(NSNotification *)aNotification {
-    // Insert code here to tear down your application
-}
+- (void)removeKeys;
 
 @end
