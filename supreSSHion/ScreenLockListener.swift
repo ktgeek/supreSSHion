@@ -20,26 +20,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-import Cocoa
+import Foundation
 
-class StatusMenuController: NSObject {
-    @IBOutlet weak var statusMenu: NSMenu!
-
-    let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
-
-    override func awakeFromNib() {
-        let icon = NSImage(named: "statusIcon")
-        icon?.isTemplate = true
-        statusItem.image = icon
-        statusItem.menu = statusMenu
+class ScreenLockListener : NSObject {
+    override init() {
+        super.init();
+        DistributedNotificationCenter.default().addObserver(
+            self, selector: #selector(self.screenLockedReceived),
+            name: NSNotification.Name(rawValue: "com.apple.screenIsLocked"), object: nil)
     }
 
-    @IBAction func quitClicked(sender: NSMenuItem) {
-        NSApplication.shared().terminate(self)
-    }
-
-    @IBAction func removeSSHKeysClicked(_ sender: NSMenuItem) {
+    func screenLockedReceived() {
+        NSLog("Received screen lock notification")
         let sshAgentCommunicator: SSHAgentCommunicator = SSHAgentCommunicator()
         sshAgentCommunicator.removeKeys()
     }
+
+    deinit {
+        DistributedNotificationCenter.default().removeObserver(self);
+    }
 }
+
+

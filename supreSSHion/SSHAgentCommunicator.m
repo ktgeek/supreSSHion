@@ -1,7 +1,3 @@
-//
-//  SSHAgentCommunicator.m
-//  supreSSHion
-//
 // MIT License
 //
 // Copyright (c) 2018 Keith Garner
@@ -37,9 +33,17 @@
 @end
 
 @implementation SSHAgentCommunicator
+-(id)init {
+    if (self = [super init])  {
+        self.sshAgentSocketPath = [[NSProcessInfo processInfo] environment][@"SSH_AUTH_SOCK"];
+    }
+
+    return self;
+}
+
 - (id)initWithSocketPath:(NSString *)socketPath {
-    if ((self = [super init])) {
-        _sshAgentSocketPath = socketPath;
+    if (self = [super init]) {
+        self.sshAgentSocketPath = socketPath;
     }
 
     return self;
@@ -48,7 +52,8 @@
 - (int)getConnectedSocket {
     struct sockaddr_un socketInfo;
     socketInfo.sun_family = AF_UNIX;
-    [_sshAgentSocketPath getCString:socketInfo.sun_path maxLength:104 encoding:NSASCIIStringEncoding];
+    [_sshAgentSocketPath getCString:socketInfo.sun_path maxLength:104
+                           encoding:NSASCIIStringEncoding];
     socketInfo.sun_len = SUN_LEN(&socketInfo);
 
     int ssh_agent_socket = socket(PF_UNIX, SOCK_STREAM, 0);

@@ -1,7 +1,3 @@
-//
-//  AppDelegate.m
-//  supreSSHion
-//
 // MIT License
 //
 // Copyright (c) 2018 Keith Garner
@@ -26,20 +22,25 @@
 
 
 #import "AppDelegate.h"
+#import "supreSSHion-Swift.h"
 
 @interface AppDelegate ()
 
 @property (weak) IBOutlet NSMenu *statusMenu;
+@property (strong) ScreenLockListener *screenLockListener;
+
 @end
 
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     // Insert code here to initialize your application
+    self.screenLockListener = [[ScreenLockListener alloc] init];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification {
     // Insert code here to tear down your application
+    self.screenLockListener = nil;
 }
 
 @end
