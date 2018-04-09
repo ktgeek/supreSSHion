@@ -1,7 +1,3 @@
-//
-//  main.m
-//  supreSSHion
-//
 // MIT License
 //
 // Copyright (c) 2018 Keith Garner
