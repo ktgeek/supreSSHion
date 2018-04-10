@@ -36,7 +36,7 @@ class LockingSupervisor : NSObject {
 
     func screenLockedReceived() {
         NSLog("Received screen lock notification")
-        if !supressionState.isDisabled() {
+        if !supressionState.isDisabled {
             removeKeysNow()
         }
     }

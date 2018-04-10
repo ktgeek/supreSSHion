@@ -24,44 +24,48 @@ import Foundation
 
 class SupresshionState : NSObject {
 
-    private var manuallyDisabled = false
+    private var infinatelyDisabled = false
     private var disabledUntil: Date?
 
-    func isDisabled() -> Bool {
-        if manuallyDisabled {
-            return true
-        }
+    var isDisabled: Bool {
+        get {
+            if infinatelyDisabled {
+                return true
+            }
 
-        return disabledUntil != nil ? (disabledUntil! > Date()) : false
+            return disabledUntil != nil ? (disabledUntil! > Date()) : false
+        }
     }
 
-    func statusMessage() -> String {
-        if !isDisabled() {
-            return "Active"
-        }
+    var statusMessage: String {
+        get {
+            if !isDisabled {
+                return "Active"
+            }
 
-        if manuallyDisabled {
-            return "Disabled"
-        }
+            if infinatelyDisabled {
+                return "Disabled"
+            }
 
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .none
-        dateFormatter.timeStyle = .short
-        return "Disabled until \(dateFormatter.string(from: disabledUntil!))"
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .none
+            dateFormatter.timeStyle = .short
+            return "Disabled until \(dateFormatter.string(from: disabledUntil!))"
+        }
     }
 
     func disable() {
-        manuallyDisabled = true
+        infinatelyDisabled = true
         disabledUntil = nil
     }
 
     func disable(until:Date) {
         disabledUntil = until
-        manuallyDisabled = false
+        infinatelyDisabled = false
     }
 
     func resume() {
-        manuallyDisabled = false
+        infinatelyDisabled = false
         disabledUntil = nil
     }
 }

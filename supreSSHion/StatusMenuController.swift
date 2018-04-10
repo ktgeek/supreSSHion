@@ -33,7 +33,7 @@ class StatusMenuController : NSObject, NSMenuDelegate {
 
     override init() {
         supresshionState = SupresshionState()
-        lockingSupervisor = LockingSupervisor.init(state: supresshionState)
+        lockingSupervisor = LockingSupervisor(state: supresshionState)
         super.init()
     }
 
@@ -62,8 +62,8 @@ class StatusMenuController : NSObject, NSMenuDelegate {
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
-        resumeItem.isHidden = !supresshionState.isDisabled();
-        stateItem.title = supresshionState.statusMessage();
+        resumeItem.isHidden = !supresshionState.isDisabled;
+        stateItem.title = supresshionState.statusMessage;
     }
 
     @IBAction func timeClicked(_ sender: NSMenuItem) {
