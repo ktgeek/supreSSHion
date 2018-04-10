@@ -11,30 +11,11 @@
 		DE3EE3B9207B923900536B64 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE3EE3B8207B923900536B64 /* Assets.xcassets */; };
 		DE3EE3BC207B923900536B64 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = DE3EE3BA207B923900536B64 /* MainMenu.xib */; };
 		DE3EE3BF207B923900536B64 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3BE207B923900536B64 /* main.m */; };
-		DE3EE3CA207B923A00536B64 /* supreSSHionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3C9207B923A00536B64 /* supreSSHionTests.m */; };
-		DE3EE3D5207B923A00536B64 /* supreSSHionUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3D4207B923A00536B64 /* supreSSHionUITests.m */; };
 		DE3EE3E4207BCE2900536B64 /* StatusMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E3207BCE2900536B64 /* StatusMenuController.swift */; };
 		DE3EE3E6207BD19E00536B64 /* SSHAgentCommunicator.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E5207BD19E00536B64 /* SSHAgentCommunicator.m */; };
 		DE3EE3E9207BE44900536B64 /* LockingSupervisor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E8207BE44900536B64 /* LockingSupervisor.swift */; };
 		DE973DDB207C1E13002DEDC5 /* SupresshionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE973DDA207C1E13002DEDC5 /* SupresshionState.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		DE3EE3C6207B923A00536B64 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DE3EE3AA207B923900536B64 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DE3EE3B1207B923900536B64;
-			remoteInfo = supreSSHion;
-		};
-		DE3EE3D1207B923A00536B64 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DE3EE3AA207B923900536B64 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DE3EE3B1207B923900536B64;
-			remoteInfo = supreSSHion;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		DE3EE3B2207B923900536B64 /* supreSSHion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = supreSSHion.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -45,12 +26,6 @@
 		DE3EE3BD207B923900536B64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DE3EE3BE207B923900536B64 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		DE3EE3C0207B923900536B64 /* supreSSHion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = supreSSHion.entitlements; sourceTree = "<group>"; };
-		DE3EE3C5207B923A00536B64 /* supreSSHionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = supreSSHionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DE3EE3C9207B923A00536B64 /* supreSSHionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = supreSSHionTests.m; sourceTree = "<group>"; };
-		DE3EE3CB207B923A00536B64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DE3EE3D0207B923A00536B64 /* supreSSHionUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = supreSSHionUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DE3EE3D4207B923A00536B64 /* supreSSHionUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = supreSSHionUITests.m; sourceTree = "<group>"; };
-		DE3EE3D6207B923A00536B64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DE3EE3E2207BCE2900536B64 /* supreSSHion-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "supreSSHion-Bridging-Header.h"; sourceTree = "<group>"; };
 		DE3EE3E3207BCE2900536B64 /* StatusMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusMenuController.swift; sourceTree = "<group>"; };
 		DE3EE3E5207BD19E00536B64 /* SSHAgentCommunicator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSHAgentCommunicator.m; sourceTree = "<group>"; };
@@ -67,20 +42,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DE3EE3C2207B923A00536B64 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DE3EE3CD207B923A00536B64 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -88,8 +49,6 @@
 			isa = PBXGroup;
 			children = (
 				DE3EE3B4207B923900536B64 /* supreSSHion */,
-				DE3EE3C8207B923A00536B64 /* supreSSHionTests */,
-				DE3EE3D3207B923A00536B64 /* supreSSHionUITests */,
 				DE3EE3B3207B923900536B64 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -98,8 +57,6 @@
 			isa = PBXGroup;
 			children = (
 				DE3EE3B2207B923900536B64 /* supreSSHion.app */,
-				DE3EE3C5207B923A00536B64 /* supreSSHionTests.xctest */,
-				DE3EE3D0207B923A00536B64 /* supreSSHionUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -124,24 +81,6 @@
 			path = supreSSHion;
 			sourceTree = "<group>";
 		};
-		DE3EE3C8207B923A00536B64 /* supreSSHionTests */ = {
-			isa = PBXGroup;
-			children = (
-				DE3EE3C9207B923A00536B64 /* supreSSHionTests.m */,
-				DE3EE3CB207B923A00536B64 /* Info.plist */,
-			);
-			path = supreSSHionTests;
-			sourceTree = "<group>";
-		};
-		DE3EE3D3207B923A00536B64 /* supreSSHionUITests */ = {
-			isa = PBXGroup;
-			children = (
-				DE3EE3D4207B923A00536B64 /* supreSSHionUITests.m */,
-				DE3EE3D6207B923A00536B64 /* Info.plist */,
-			);
-			path = supreSSHionUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -162,42 +101,6 @@
 			productReference = DE3EE3B2207B923900536B64 /* supreSSHion.app */;
 			productType = "com.apple.product-type.application";
 		};
-		DE3EE3C4207B923A00536B64 /* supreSSHionTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DE3EE3DC207B923A00536B64 /* Build configuration list for PBXNativeTarget "supreSSHionTests" */;
-			buildPhases = (
-				DE3EE3C1207B923A00536B64 /* Sources */,
-				DE3EE3C2207B923A00536B64 /* Frameworks */,
-				DE3EE3C3207B923A00536B64 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				DE3EE3C7207B923A00536B64 /* PBXTargetDependency */,
-			);
-			name = supreSSHionTests;
-			productName = supreSSHionTests;
-			productReference = DE3EE3C5207B923A00536B64 /* supreSSHionTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		DE3EE3CF207B923A00536B64 /* supreSSHionUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DE3EE3DF207B923A00536B64 /* Build configuration list for PBXNativeTarget "supreSSHionUITests" */;
-			buildPhases = (
-				DE3EE3CC207B923A00536B64 /* Sources */,
-				DE3EE3CD207B923A00536B64 /* Frameworks */,
-				DE3EE3CE207B923A00536B64 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				DE3EE3D2207B923A00536B64 /* PBXTargetDependency */,
-			);
-			name = supreSSHionUITests;
-			productName = supreSSHionUITests;
-			productReference = DE3EE3D0207B923A00536B64 /* supreSSHionUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -216,14 +119,6 @@
 							};
 						};
 					};
-					DE3EE3C4207B923A00536B64 = {
-						CreatedOnToolsVersion = 9.3;
-						TestTargetID = DE3EE3B1207B923900536B64;
-					};
-					DE3EE3CF207B923A00536B64 = {
-						CreatedOnToolsVersion = 9.3;
-						TestTargetID = DE3EE3B1207B923900536B64;
-					};
 				};
 			};
 			buildConfigurationList = DE3EE3AD207B923900536B64 /* Build configuration list for PBXProject "supreSSHion" */;
@@ -240,8 +135,6 @@
 			projectRoot = "";
 			targets = (
 				DE3EE3B1207B923900536B64 /* supreSSHion */,
-				DE3EE3C4207B923A00536B64 /* supreSSHionTests */,
-				DE3EE3CF207B923A00536B64 /* supreSSHionUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -253,20 +146,6 @@
 			files = (
 				DE3EE3B9207B923900536B64 /* Assets.xcassets in Resources */,
 				DE3EE3BC207B923900536B64 /* MainMenu.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DE3EE3C3207B923A00536B64 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DE3EE3CE207B923A00536B64 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,36 +165,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DE3EE3C1207B923A00536B64 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DE3EE3CA207B923A00536B64 /* supreSSHionTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DE3EE3CC207B923A00536B64 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DE3EE3D5207B923A00536B64 /* supreSSHionUITests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		DE3EE3C7207B923A00536B64 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DE3EE3B1207B923900536B64 /* supreSSHion */;
-			targetProxy = DE3EE3C6207B923A00536B64 /* PBXContainerItemProxy */;
-		};
-		DE3EE3D2207B923A00536B64 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DE3EE3B1207B923900536B64 /* supreSSHion */;
-			targetProxy = DE3EE3D1207B923A00536B64 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		DE3EE3BA207B923900536B64 /* MainMenu.xib */ = {
@@ -380,7 +230,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -432,7 +282,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 			};
@@ -443,8 +293,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = DAJ4PZBQR6;
 				INFOPLIST_FILE = supreSSHion/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -453,6 +305,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kgarner.supreSSHion;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "supreSSHion/supreSSHion-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -464,8 +317,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = DAJ4PZBQR6;
 				INFOPLIST_FILE = supreSSHion/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -474,82 +329,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kgarner.supreSSHion;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "supreSSHion/supreSSHion-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
-			};
-			name = Release;
-		};
-		DE3EE3DD207B923A00536B64 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = supreSSHionTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.kgarner.supreSSHionTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/supreSSHion.app/Contents/MacOS/supreSSHion";
-			};
-			name = Debug;
-		};
-		DE3EE3DE207B923A00536B64 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = supreSSHionTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.kgarner.supreSSHionTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/supreSSHion.app/Contents/MacOS/supreSSHion";
-			};
-			name = Release;
-		};
-		DE3EE3E0207B923A00536B64 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = supreSSHionUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.kgarner.supreSSHionUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = supreSSHion;
-			};
-			name = Debug;
-		};
-		DE3EE3E1207B923A00536B64 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = supreSSHionUITests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.kgarner.supreSSHionUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_TARGET_NAME = supreSSHion;
 			};
 			name = Release;
 		};
@@ -570,24 +352,6 @@
 			buildConfigurations = (
 				DE3EE3DA207B923A00536B64 /* Debug */,
 				DE3EE3DB207B923A00536B64 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DE3EE3DC207B923A00536B64 /* Build configuration list for PBXNativeTarget "supreSSHionTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DE3EE3DD207B923A00536B64 /* Debug */,
-				DE3EE3DE207B923A00536B64 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DE3EE3DF207B923A00536B64 /* Build configuration list for PBXNativeTarget "supreSSHionUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DE3EE3E0207B923A00536B64 /* Debug */,
-				DE3EE3E1207B923A00536B64 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
