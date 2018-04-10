@@ -65,4 +65,10 @@ class StatusMenuController : NSObject, NSMenuDelegate {
         resumeItem.isHidden = !supresshionState.isDisabled();
         stateItem.title = supresshionState.statusMessage();
     }
+
+    @IBAction func timeClicked(_ sender: NSMenuItem) {
+        let date = Date() + 1800
+        supresshionState.disable(until: date)
+    }
+
 }

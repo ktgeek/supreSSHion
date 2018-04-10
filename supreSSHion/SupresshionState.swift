@@ -32,7 +32,7 @@ class SupresshionState : NSObject {
             return true
         }
 
-        return disabledUntil != nil ? (Date() >= disabledUntil!) : false
+        return disabledUntil != nil ? (disabledUntil! > Date()) : false
     }
 
     func statusMessage() -> String {
@@ -55,8 +55,9 @@ class SupresshionState : NSObject {
         disabledUntil = nil
     }
 
-    func disable(until:NSDate) {
-        // TODO: make this happen
+    func disable(until:Date) {
+        disabledUntil = until
+        manuallyDisabled = false
     }
 
     func resume() {

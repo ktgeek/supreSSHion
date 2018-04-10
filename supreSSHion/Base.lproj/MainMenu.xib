@@ -39,6 +39,9 @@
                         <items>
                             <menuItem title="for 30 minutes" id="TQF-Sv-UE1">
                                 <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="timeClicked:" target="hyF-yk-Hr7" id="j17-y9-7RY"/>
+                                </connections>
                             </menuItem>
                             <menuItem title="for 1 hour" id="Vx2-0D-cAr">
                                 <modifierMask key="keyEquivalentModifierMask"/>
