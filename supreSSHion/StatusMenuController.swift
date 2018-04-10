@@ -67,7 +67,7 @@ class StatusMenuController : NSObject, NSMenuDelegate {
     }
 
     @IBAction func timeClicked(_ sender: NSMenuItem) {
-        let date = Date() + 1800
+        let date = Date() + TimeInterval(sender.tag * 60)
         supresshionState.disable(until: date)
     }
 
