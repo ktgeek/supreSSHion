@@ -3,7 +3,8 @@ supreSSHion
 ===========
 
 An OS X menubar agent that listens for screen lock and then
-communicates with ssh-agent to unload keys from memory.
+communicates with ssh-agent to unload keys from memory. It can also
+temporarily disable this functionality as requested by the user.
 
 ![supreSSHion screenshot](doc/supresshion_screenshot.png)
 
