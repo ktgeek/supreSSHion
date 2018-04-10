@@ -22,9 +22,13 @@
 
 import Foundation
 
-class ScreenLockListener : NSObject {
-    override init() {
+class LockingSupervisor : NSObject {
+    var supressionState: SupresshionState
+
+    init(state:SupresshionState) {
+        supressionState = state
         super.init();
+
         DistributedNotificationCenter.default().addObserver(
             self, selector: #selector(self.screenLockedReceived),
             name: NSNotification.Name(rawValue: "com.apple.screenIsLocked"), object: nil)
@@ -32,8 +36,14 @@ class ScreenLockListener : NSObject {
 
     func screenLockedReceived() {
         NSLog("Received screen lock notification")
-        let sshAgentCommunicator: SSHAgentCommunicator = SSHAgentCommunicator()
-        sshAgentCommunicator.removeKeys()
+        if !supressionState.isDisabled() {
+            removeKeysNow()
+        }
+    }
+
+    func removeKeysNow() {
+        let sshAgentCommicator = SSHAgentCommunicator();
+        sshAgentCommicator.removeKeys()
     }
 
     deinit {

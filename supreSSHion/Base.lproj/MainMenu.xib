@@ -11,31 +11,64 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate"/>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <customObject id="hyF-yk-Hr7" customClass="StatusMenuController" customModule="supreSSHion" customModuleProvider="target">
             <connections>
+                <outlet property="resumeItem" destination="l17-Jc-30U" id="pkN-Wq-YOe"/>
+                <outlet property="stateItem" destination="AKc-mZ-5ug" id="X1h-UC-yvp"/>
                 <outlet property="statusMenu" destination="TcH-Lc-TPZ" id="1cp-NE-vVl"/>
             </connections>
         </customObject>
         <menu id="TcH-Lc-TPZ">
             <items>
-                <menuItem title="Preferences" id="A7Z-fY-Wec">
+                <menuItem title="State" id="AKc-mZ-5ug">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem isSeparatorItem="YES" id="Khf-r5-HnU"/>
+                <menuItem isSeparatorItem="YES" id="bBi-u2-5go"/>
+                <menuItem title="Resume" id="l17-Jc-30U">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="resumeClicked:" target="hyF-yk-Hr7" id="Oud-cA-59j"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Disable..." id="Sau-cP-p0T">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Disable..." id="ZiW-C6-Yux">
+                        <items>
+                            <menuItem title="for 30 minutes" id="TQF-Sv-UE1">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                            </menuItem>
+                            <menuItem title="for 1 hour" id="Vx2-0D-cAr">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                            </menuItem>
+                            <menuItem title="for 2 hours" id="YJm-6o-fvg">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                            </menuItem>
+                            <menuItem title="for 3 hours" id="NiR-Wg-Dbb">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                            </menuItem>
+                            <menuItem title="until resumed" id="Ra2-PJ-GVc">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="untilResumedClicked:" target="hyF-yk-Hr7" id="gtt-Ub-hF2"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="f6T-7g-idm"/>
                 <menuItem title="Remove SSH Keys" id="TRu-hy-YDe">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="removeSSHKeysClicked:" target="hyF-yk-Hr7" id="cuD-vl-LKe"/>
                     </connections>
                 </menuItem>
-                <menuItem isSeparatorItem="YES" id="f6T-7g-idm"/>
+                <menuItem isSeparatorItem="YES" id="0BL-pR-V5S"/>
                 <menuItem title="About" id="yC9-B8-6tL">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem isSeparatorItem="YES" id="0BL-pR-V5S"/>
                 <menuItem title="Quit" id="o8n-bo-jR8">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
@@ -43,7 +76,10 @@
                     </connections>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="-1343" y="-1151"/>
+            <connections>
+                <outlet property="delegate" destination="hyF-yk-Hr7" id="e7v-S1-hq0"/>
+            </connections>
+            <point key="canvasLocation" x="-1795" y="-1148"/>
         </menu>
     </objects>
 </document>

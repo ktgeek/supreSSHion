@@ -22,10 +22,20 @@
 
 import Cocoa
 
-class StatusMenuController: NSObject {
+class StatusMenuController : NSObject, NSMenuDelegate {
     @IBOutlet weak var statusMenu: NSMenu!
+    @IBOutlet weak var stateItem: NSMenuItem!
+    @IBOutlet weak var resumeItem: NSMenuItem!
 
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
+    var supresshionState: SupresshionState
+    var lockingSupervisor: LockingSupervisor
+
+    override init() {
+        supresshionState = SupresshionState()
+        lockingSupervisor = LockingSupervisor.init(state: supresshionState)
+        super.init()
+    }
 
     override func awakeFromNib() {
         let icon = NSImage(named: "statusIcon")
@@ -38,8 +48,21 @@ class StatusMenuController: NSObject {
         NSApplication.shared().terminate(self)
     }
 
+    // Manually clicking remove keys ALWAYS overrides being disabled
     @IBAction func removeSSHKeysClicked(_ sender: NSMenuItem) {
-        let sshAgentCommunicator: SSHAgentCommunicator = SSHAgentCommunicator()
-        sshAgentCommunicator.removeKeys()
+        lockingSupervisor.removeKeysNow()
+    }
+
+    @IBAction func resumeClicked(_ sender: NSMenuItem) {
+        supresshionState.resume()
+    }
+
+    @IBAction func untilResumedClicked(_ sender: NSMenuItem) {
+        supresshionState.disable()
+    }
+
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        resumeItem.isHidden = !supresshionState.isDisabled();
+        stateItem.title = supresshionState.statusMessage();
     }
 }

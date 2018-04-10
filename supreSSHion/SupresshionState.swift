@@ -1,4 +1,4 @@
-// MIT License
+//// MIT License
 //
 // Copyright (c) 2018 Keith Garner
 //
@@ -20,24 +20,47 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+import Foundation
 
-#import "AppDelegate.h"
-#import "supreSSHion-Swift.h"
+class SupresshionState : NSObject {
 
-@interface AppDelegate ()
+    private var manuallyDisabled = false
+    private var disabledUntil: Date?
 
-@property (weak) IBOutlet NSMenu *statusMenu;
+    func isDisabled() -> Bool {
+        if manuallyDisabled {
+            return true
+        }
 
-@end
+        return disabledUntil != nil ? (Date() >= disabledUntil!) : false
+    }
 
-@implementation AppDelegate
+    func statusMessage() -> String {
+        if !isDisabled() {
+            return "Active"
+        }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-    // Insert code here to initialize your application
+        if manuallyDisabled {
+            return "Disabled"
+        }
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .none
+        dateFormatter.timeStyle = .short
+        return "Disabled until \(dateFormatter.string(from: disabledUntil!))"
+    }
+
+    func disable() {
+        manuallyDisabled = true
+        disabledUntil = nil
+    }
+
+    func disable(until:NSDate) {
+        // TODO: make this happen
+    }
+
+    func resume() {
+        manuallyDisabled = false
+        disabledUntil = nil
+    }
 }
-
-- (void)applicationWillTerminate:(NSNotification *)aNotification {
-    // Insert code here to tear down your application
-}
-
-@end
