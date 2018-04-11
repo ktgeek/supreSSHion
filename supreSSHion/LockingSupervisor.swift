@@ -21,6 +21,7 @@
 // SOFTWARE.
 
 import Foundation
+import AppKit
 
 class LockingSupervisor : NSObject {
     var supressionState: SupresshionState
@@ -29,9 +30,18 @@ class LockingSupervisor : NSObject {
         supressionState = state
         super.init();
 
+        // I have searched both the net and apple docs, and can't find
+        // this documented other than net posters catching all
+        // notifications and determining "com.apple.screenIsLocked" is
+        // the event we want here. I'd love to use something properly
+        // defined and documented.
         DistributedNotificationCenter.default().addObserver(
             self, selector: #selector(self.screenLockedReceived),
             name: NSNotification.Name(rawValue: "com.apple.screenIsLocked"), object: nil)
+
+        NSWorkspace.shared().notificationCenter.addObserver(
+            self, selector: #selector(self.workplaceWillSleepReceived),
+            name: NSNotification.Name.NSWorkspaceWillSleep, object: nil)
     }
 
     func screenLockedReceived() {
@@ -41,6 +51,15 @@ class LockingSupervisor : NSObject {
         }
     }
 
+    // sleeping automatically resumes the key removal behavior. When
+    // OS X sleeps it issues a sleep notification and then a screen
+    // lock notification so we only reset the supressionState on the
+    // sleep notification.
+    func workplaceWillSleepReceived() {
+        NSLog("Received sleeping notification")
+        supressionState.resume()
+    }
+
     func removeKeysNow() {
         let sshAgentCommicator = SSHAgentCommunicator();
         sshAgentCommicator.removeKeys()
@@ -48,6 +67,7 @@ class LockingSupervisor : NSObject {
 
     deinit {
         DistributedNotificationCenter.default().removeObserver(self);
+        NSWorkspace.shared().notificationCenter.removeObserver(self);
     }
 }
 
