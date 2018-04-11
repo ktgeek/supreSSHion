@@ -67,7 +67,7 @@
 
     // Per ssh communication, uint32 of message length (in our case the one byte following) and
     // then the message type which is SSH_AGENTC_REMOVE_ALL_IDENTITIES
-    int8_t buffer[5];
+    uint8_t buffer[5];
     uint32_t messageLength = htonl(1);
     memcpy(buffer, &messageLength, 4);
     buffer[4] = SSH_AGENT_REMOVE_ALL_IDENTITIES;
