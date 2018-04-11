@@ -1,8 +1,7 @@
-
 supreSSHion
 ===========
 
-An OS X menubar agent that listens for screen lock and then
+An OS X menubar agent that listens for screen lock and sleep and then
 communicates with ssh-agent to unload keys from memory. It can also
 temporarily disable this functionality as requested by the user.
 
@@ -41,13 +40,16 @@ the year, I was inspired to finally turns this into reality.
 ## How it works
 
 When launched, supreSSHion registers itself as a listener listing for
-"screen is locked" events. When it receives an event, it communicates
-to ssh-agent over its unix socket using ssh-agent's protocol asking
-ssh-agent to unload all known keys.
+"screen is locked" and "workplace will sleep" events. When it receives
+a lock event, it communicates to ssh-agent over its unix socket using
+ssh-agent's protocol asking ssh-agent to unload all known keys.
 
 It locates the unix socket by the SSH_AUTH_SOCK environmental
 variable. OS X automatically creates that environmental variable when
 you log in.
+
+When a sleep event is recevied, it will reactivate the key removal if
+the user had disabled the key unloading functionality.
 
 ### What about loading my SSH key?
 
