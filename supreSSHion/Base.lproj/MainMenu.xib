@@ -37,25 +37,25 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Disable..." id="ZiW-C6-Yux">
                         <items>
-                            <menuItem title="for 30 minutes" tag="30" id="TQF-Sv-UE1">
+                            <menuItem title="for 30 minutes" tag="1800" id="TQF-Sv-UE1">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="timeClicked:" target="hyF-yk-Hr7" id="j17-y9-7RY"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="for 1 hour" tag="60" id="Vx2-0D-cAr">
+                            <menuItem title="for 1 hour" tag="3600" id="Vx2-0D-cAr">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="timeClicked:" target="hyF-yk-Hr7" id="e6W-lC-Y5n"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="for 2 hours" tag="120" id="YJm-6o-fvg">
+                            <menuItem title="for 2 hours" tag="7200" id="YJm-6o-fvg">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="timeClicked:" target="hyF-yk-Hr7" id="FdS-DA-tgt"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="for 3 hours" tag="180" id="NiR-Wg-Dbb">
+                            <menuItem title="for 3 hours" tag="10800" id="NiR-Wg-Dbb">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="timeClicked:" target="hyF-yk-Hr7" id="4WO-Mf-qfv"/>
@@ -91,7 +91,7 @@
             <connections>
                 <outlet property="delegate" destination="hyF-yk-Hr7" id="e7v-S1-hq0"/>
             </connections>
-            <point key="canvasLocation" x="-1795" y="-1148"/>
+            <point key="canvasLocation" x="-2103" y="-1239"/>
         </menu>
     </objects>
 </document>

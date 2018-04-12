@@ -54,21 +54,20 @@ class StatusMenuController : NSObject, NSMenuDelegate {
     }
 
     @IBAction func resumeClicked(_ sender: NSMenuItem) {
-        supresshionState.resume()
+        lockingSupervisor.resume()
     }
 
     @IBAction func untilResumedClicked(_ sender: NSMenuItem) {
-        supresshionState.disable()
+        lockingSupervisor.disable()
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
-        resumeItem.isHidden = !supresshionState.isDisabled;
-        stateItem.title = supresshionState.statusMessage;
+        resumeItem.isHidden = !supresshionState.isDisabled
+        stateItem.title = supresshionState.statusMessage
     }
 
     @IBAction func timeClicked(_ sender: NSMenuItem) {
-        let date = Date() + TimeInterval(sender.tag * 60)
-        supresshionState.disable(until: date)
+        lockingSupervisor.disable(forInterval: TimeInterval(sender.tag))
     }
 
 }

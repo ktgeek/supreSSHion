@@ -25,10 +25,12 @@ import AppKit
 
 class LockingSupervisor : NSObject {
     var supressionState: SupresshionState
+    var disableTimer: Timer?
+    var screenIsLocked = false
 
     init(state:SupresshionState) {
         supressionState = state
-        super.init();
+        super.init()
 
         // I have searched both the net and apple docs, and can't find
         // this documented other than net posters catching all
@@ -39,16 +41,24 @@ class LockingSupervisor : NSObject {
             self, selector: #selector(self.screenLockedReceived),
             name: NSNotification.Name(rawValue: "com.apple.screenIsLocked"), object: nil)
 
+        DistributedNotificationCenter.default().addObserver(
+            self, selector: #selector(self.screenUnlockedReceived),
+            name: NSNotification.Name(rawValue: "com.apple.screenIsUnlocked"), object: nil)
+
         NSWorkspace.shared().notificationCenter.addObserver(
             self, selector: #selector(self.workplaceWillSleepReceived),
             name: NSNotification.Name.NSWorkspaceWillSleep, object: nil)
     }
 
     func screenLockedReceived() {
-        NSLog("Received screen lock notification")
+        screenIsLocked = true
         if !supressionState.isDisabled {
             removeKeysNow()
         }
+    }
+
+    func screenUnlockedReceived() {
+        screenIsLocked = false
     }
 
     // sleeping automatically resumes the key removal behavior. When
@@ -56,18 +66,56 @@ class LockingSupervisor : NSObject {
     // lock notification so we only reset the supressionState on the
     // sleep notification.
     func workplaceWillSleepReceived() {
-        NSLog("Received sleeping notification")
         supressionState.resume()
+        timerEarlyExit()
     }
 
     func removeKeysNow() {
-        let sshAgentCommicator = SSHAgentCommunicator();
+        let sshAgentCommicator = SSHAgentCommunicator()
         sshAgentCommicator.removeKeys()
     }
 
+    func resume() {
+        supressionState.resume()
+        timerEarlyExit()
+    }
+
+    func disable() {
+        supressionState.disable()
+        timerEarlyExit()
+    }
+
+    func disable(forInterval: TimeInterval) {
+        disableTimer?.invalidate()
+        let date = Date() + forInterval
+        supressionState.disable(until: date)
+
+        disableTimer = Timer.scheduledTimer(withTimeInterval: forInterval, repeats: false) { _ in
+            self.timerExpired()
+        }
+    }
+
+    @objc func timerExpired() {
+        supressionState.resume()
+        disableTimer = nil
+        if screenIsLocked {
+            NSLog("Removing keys because the screen is locked and the disable timer expired")
+            removeKeysNow()
+        }
+        else {
+            NSLog("Not removing keys because the screen is unlocked")
+        }
+    }
+
+    func timerEarlyExit() {
+        disableTimer?.invalidate()
+        disableTimer = nil
+    }
+
     deinit {
-        DistributedNotificationCenter.default().removeObserver(self);
-        NSWorkspace.shared().notificationCenter.removeObserver(self);
+        timerEarlyExit()
+        DistributedNotificationCenter.default().removeObserver(self)
+        NSWorkspace.shared().notificationCenter.removeObserver(self)
     }
 }
 

@@ -48,8 +48,13 @@ It locates the unix socket by the SSH_AUTH_SOCK environmental
 variable. OS X automatically creates that environmental variable when
 you log in.
 
+If the key removal functionality is disabled lock events will not
+trigger key removal. When the screen is locked and the experiation
+time of the disable has been reached the keys will be removed.
+ 
 When a sleep event is recevied, it will reactivate the key removal if
 the user had disabled the key unloading functionality.
+
 
 ### What about loading my SSH key?
 
