@@ -1,9 +1,10 @@
 supreSSHion
 ===========
 
-An OS X menubar agent that listens for screen lock and sleep and then
-communicates with ssh-agent to unload keys from memory. It can also
-temporarily disable this functionality as requested by the user.
+An OS X menubar agent that listens for screen lock and sleep events
+and then communicates with ssh-agent to unload keys from memory. It
+can also temporarily disable this functionality as requested by the
+user.
 
 ![supreSSHion screenshot](doc/supresshion_screenshot.png)
 
@@ -26,33 +27,32 @@ gap. I used ssh_locker for a long time and made
 [modifictions](https://github.com/ktgeek/ssh_locker) as times
 changed.
 
-One issue is that bring newer developers who are new to ssh, and
-aren't familiar with compiling on OS X users up to speed and putting
+One issue is that bringing this to users who are new to ssh and/or
+aren't familiar with compiling on OS X and/or up to speed with putting
 LaunchAgents in their Library, etc, etc, was problematic.
 Additionally, there have been some situations where I've wanted to
 temporarily disable the key unloading, which was not easy to do with
-the breakground daemon version of ssh_locker. For these reasons a menu
+the background daemon version of ssh_locker. For these reasons a menu
 bar application seemed like a good fit.
 
-After giving a talk an internal talk on ssh at my office earlier in
-the year, I was inspired to finally turns this into reality.
+After giving an internal talk on ssh at my company earlier in the
+year, I was inspired to finally turns this idea into reality.
 
 ## How it works
 
-When launched, supreSSHion registers itself as a listener listing for
-"screen is locked" and "workplace will sleep" events. When it receives
-a lock event, it communicates to ssh-agent over its unix socket using
-ssh-agent's protocol asking ssh-agent to unload all known keys.
+When launched, supreSSHion registers itself as a listener for "screen
+is locked" and "workplace will sleep" events.
 
-It locates the unix socket by the SSH_AUTH_SOCK environmental
-variable. OS X automatically creates that environmental variable when
-you log in.
+When it receives a lock event, it communicates to ssh-agent over its
+unix socket asking ssh-agent to unload all known keys. It locates the
+unix socket by the SSH_AUTH_SOCK environmental variable. OS X
+automatically creates that environmental variable when you log in.
 
 If the key removal functionality is disabled lock events will not
-trigger key removal. When the screen is locked and the experiation
+trigger key removal. When the screen is locked and the expiration
 time of the disable has been reached the keys will be removed.
  
-When a sleep event is recevied, it will reactivate the key removal if
+When a sleep event is received, it will reactivate the key removal if
 the user had disabled the key unloading functionality.
 
 
