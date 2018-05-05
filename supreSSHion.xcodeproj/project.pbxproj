@@ -13,7 +13,7 @@
 		DE3EE3BF207B923900536B64 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3BE207B923900536B64 /* main.m */; };
 		DE3EE3E4207BCE2900536B64 /* StatusMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E3207BCE2900536B64 /* StatusMenuController.swift */; };
 		DE3EE3E6207BD19E00536B64 /* SSHAgentCommunicator.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E5207BD19E00536B64 /* SSHAgentCommunicator.m */; };
-		DE3EE3E9207BE44900536B64 /* LockingSupervisor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E8207BE44900536B64 /* LockingSupervisor.swift */; };
+		DE3EE3E9207BE44900536B64 /* AgentSupervisor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E8207BE44900536B64 /* AgentSupervisor.swift */; };
 		DE973DDB207C1E13002DEDC5 /* SupresshionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE973DDA207C1E13002DEDC5 /* SupresshionState.swift */; };
 /* End PBXBuildFile section */
 
@@ -30,7 +30,7 @@
 		DE3EE3E3207BCE2900536B64 /* StatusMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusMenuController.swift; sourceTree = "<group>"; };
 		DE3EE3E5207BD19E00536B64 /* SSHAgentCommunicator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSHAgentCommunicator.m; sourceTree = "<group>"; };
 		DE3EE3E7207BD27F00536B64 /* SSHAgentCommunicator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSHAgentCommunicator.h; sourceTree = "<group>"; };
-		DE3EE3E8207BE44900536B64 /* LockingSupervisor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockingSupervisor.swift; sourceTree = "<group>"; };
+		DE3EE3E8207BE44900536B64 /* AgentSupervisor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentSupervisor.swift; sourceTree = "<group>"; };
 		DE973DDA207C1E13002DEDC5 /* SupresshionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupresshionState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -70,7 +70,7 @@
 				DE3EE3BA207B923900536B64 /* MainMenu.xib */,
 				DE3EE3E3207BCE2900536B64 /* StatusMenuController.swift */,
 				DE973DDA207C1E13002DEDC5 /* SupresshionState.swift */,
-				DE3EE3E8207BE44900536B64 /* LockingSupervisor.swift */,
+				DE3EE3E8207BE44900536B64 /* AgentSupervisor.swift */,
 				DE3EE3E7207BD27F00536B64 /* SSHAgentCommunicator.h */,
 				DE3EE3E5207BD19E00536B64 /* SSHAgentCommunicator.m */,
 				DE3EE3BD207B923900536B64 /* Info.plist */,
@@ -160,7 +160,7 @@
 				DE3EE3E4207BCE2900536B64 /* StatusMenuController.swift in Sources */,
 				DE3EE3BF207B923900536B64 /* main.m in Sources */,
 				DE3EE3B7207B923900536B64 /* AppDelegate.m in Sources */,
-				DE3EE3E9207BE44900536B64 /* LockingSupervisor.swift in Sources */,
+				DE3EE3E9207BE44900536B64 /* AgentSupervisor.swift in Sources */,
 				DE3EE3E6207BD19E00536B64 /* SSHAgentCommunicator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

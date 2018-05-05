@@ -29,11 +29,11 @@ class StatusMenuController : NSObject, NSMenuDelegate {
 
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
     var supresshionState: SupresshionState
-    var lockingSupervisor: LockingSupervisor
+    var lockingSupervisor: AgentSupervisor
 
     override init() {
         supresshionState = SupresshionState()
-        lockingSupervisor = LockingSupervisor(state: supresshionState)
+        lockingSupervisor = AgentSupervisor(state: supresshionState)
         super.init()
     }
 

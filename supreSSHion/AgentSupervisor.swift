@@ -23,7 +23,7 @@
 import Foundation
 import AppKit
 
-class LockingSupervisor : NSObject {
+class AgentSupervisor : NSObject {
     var supressionState: SupresshionState
     var disableTimer: Timer?
     var screenIsLocked = false
