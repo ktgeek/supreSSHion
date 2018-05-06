@@ -26,14 +26,15 @@ class StatusMenuController : NSObject, NSMenuDelegate {
     @IBOutlet weak var statusMenu: NSMenu!
     @IBOutlet weak var stateItem: NSMenuItem!
     @IBOutlet weak var resumeItem: NSMenuItem!
+    @IBOutlet weak var keysItem: NSMenuItem!
 
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
     var supresshionState: SupresshionState
-    var lockingSupervisor: AgentSupervisor
+    var agentSupervisor: AgentSupervisor
 
     override init() {
         supresshionState = SupresshionState()
-        lockingSupervisor = AgentSupervisor(state: supresshionState)
+        agentSupervisor = AgentSupervisor(state: supresshionState)
         super.init()
     }
 
@@ -50,24 +51,27 @@ class StatusMenuController : NSObject, NSMenuDelegate {
 
     // Manually clicking remove keys ALWAYS overrides being disabled
     @IBAction func removeSSHKeysClicked(_ sender: NSMenuItem) {
-        lockingSupervisor.removeKeysNow()
+        agentSupervisor.removeKeysNow()
     }
 
     @IBAction func resumeClicked(_ sender: NSMenuItem) {
-        lockingSupervisor.resume()
+        agentSupervisor.resume()
     }
 
     @IBAction func untilResumedClicked(_ sender: NSMenuItem) {
-        lockingSupervisor.disable()
+        agentSupervisor.disable()
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
         resumeItem.isHidden = !supresshionState.isDisabled
         stateItem.title = supresshionState.statusMessage
+
+        keysItem.title = agentSupervisor.keysLoadedMessage
+        keysItem.isHidden = false
     }
 
     @IBAction func timeClicked(_ sender: NSMenuItem) {
-        lockingSupervisor.disable(forInterval: TimeInterval(sender.tag))
+        agentSupervisor.disable(forInterval: TimeInterval(sender.tag))
     }
 
 }

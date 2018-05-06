@@ -112,6 +112,17 @@ class AgentSupervisor : NSObject {
         disableTimer = nil
     }
 
+    var keysLoadedMessage: String {
+        get {
+            let sshAgentCommicator = SSHAgentCommunicator()
+
+            let keys = sshAgentCommicator.getNumberOfKeysLoaded()
+            let keyString = keys == 1 ? "key" : "keys"
+
+            return "\(keys) \(keyString) loaded"
+        }
+    }
+
     deinit {
         timerEarlyExit()
         DistributedNotificationCenter.default().removeObserver(self)

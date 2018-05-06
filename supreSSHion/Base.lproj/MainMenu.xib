@@ -16,6 +16,7 @@
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <customObject id="hyF-yk-Hr7" customClass="StatusMenuController" customModule="supreSSHion" customModuleProvider="target">
             <connections>
+                <outlet property="keysItem" destination="d0J-by-Cqh" id="NpK-O1-Mvz"/>
                 <outlet property="resumeItem" destination="l17-Jc-30U" id="pkN-Wq-YOe"/>
                 <outlet property="stateItem" destination="AKc-mZ-5ug" id="X1h-UC-yvp"/>
                 <outlet property="statusMenu" destination="TcH-Lc-TPZ" id="1cp-NE-vVl"/>
@@ -24,6 +25,9 @@
         <menu id="TcH-Lc-TPZ">
             <items>
                 <menuItem title="State" id="AKc-mZ-5ug">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Keys Loaded" id="d0J-by-Cqh">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="bBi-u2-5go"/>
@@ -91,7 +95,7 @@
             <connections>
                 <outlet property="delegate" destination="hyF-yk-Hr7" id="e7v-S1-hq0"/>
             </connections>
-            <point key="canvasLocation" x="-2103" y="-1239"/>
+            <point key="canvasLocation" x="-2350" y="-1397"/>
         </menu>
     </objects>
 </document>

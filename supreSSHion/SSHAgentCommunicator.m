@@ -26,7 +26,11 @@
 #include <sys/socket.h>
 
 #define SSH_AGENT_SUCCESS 0x6
-#define SSH_AGENT_REMOVE_ALL_IDENTITIES 0x13
+#define SSH_AGENT_FAILURE 0x5
+#define SSH_AGENT_IDENTITIES_ANSWER 0xc
+
+#define SSH_AGENTC_REQUEST_IDENTITIES 0xb
+#define SSH_AGENTC_REMOVE_ALL_IDENTITIES 0x13
 
 @interface SSHAgentCommunicator ()
 - (int)getConnectedSocket;
@@ -70,7 +74,7 @@
     uint8_t buffer[5];
     uint32_t messageLength = htonl(1);
     memcpy(buffer, &messageLength, 4);
-    buffer[4] = SSH_AGENT_REMOVE_ALL_IDENTITIES;
+    buffer[4] = SSH_AGENTC_REMOVE_ALL_IDENTITIES;
     send(socket, buffer, 5, 0);
 
     recv(socket, buffer, 5, MSG_WAITALL);
@@ -89,5 +93,57 @@
     }
 
     close(socket);
+}
+
+- (int64_t)getNumberOfKeysLoaded {
+    int socket = self.getConnectedSocket;
+
+    uint8_t cmdBuffer[5];
+    uint32_t messageLength = htonl(1);
+    memcpy(cmdBuffer, &messageLength, 4);
+    cmdBuffer[4] = SSH_AGENTC_REQUEST_IDENTITIES;
+    send(socket, cmdBuffer, 5, 0);
+
+    recv(socket, cmdBuffer, 5, MSG_WAITALL);
+
+    memcpy(&messageLength, cmdBuffer, 4);
+    messageLength = ntohl(messageLength);
+
+    // TODO: Turn this into a generic function if possible/nessessary.
+    if (cmdBuffer[4] != SSH_AGENT_IDENTITIES_ANSWER)
+    {
+        NSLog(@"Failure getting list of keys");
+        // We are closing the socket pretty hard core without reading
+        // all the data... will this cause us problems in the future?
+        close(socket);
+
+        // Can't use an NSException up in swift land, so this will
+        // just break everything if it gets tossed. TODO: fix this
+        NSException *e = [NSException
+                            exceptionWithName:@"KeyRetreivalEception"
+                            reason:@"SSH_AGENT_IDENTITIES_ANSWER not returned"
+                            userInfo:nil];
+        @throw e;
+    }
+
+    recv(socket, cmdBuffer, 4, MSG_WAITALL);
+
+    uint32_t nKeys;
+    memcpy(&nKeys, cmdBuffer, 4);
+    nKeys = ntohl(nKeys);
+
+    // If we made it this far, let us remove the byte for the command
+    // and the 4 bytes for the number of keys
+    messageLength = messageLength - 5;
+
+    // Right now we aren't doing anything with the keys returned,
+    // but we'll swallow the data to not make the agent mad.
+    uint8_t keyBuffer[messageLength];
+    if (messageLength > 0) {
+        recv(socket, keyBuffer, messageLength, MSG_WAITALL);
+    }
+
+    close(socket);
+    return nKeys;
 }
 @end
