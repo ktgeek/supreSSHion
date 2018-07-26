@@ -31,6 +31,7 @@ class StatusMenuController : NSObject, NSMenuDelegate {
     let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
     var supresshionState: SupresshionState
     var agentSupervisor: AgentSupervisor
+    var aboutWindow: AboutWindow!
 
     override init() {
         supresshionState = SupresshionState()
@@ -43,6 +44,8 @@ class StatusMenuController : NSObject, NSMenuDelegate {
         icon?.isTemplate = true
         statusItem.image = icon
         statusItem.menu = statusMenu
+
+        aboutWindow = AboutWindow()
     }
 
     @IBAction func quitClicked(sender: NSMenuItem) {
@@ -74,4 +77,7 @@ class StatusMenuController : NSObject, NSMenuDelegate {
         agentSupervisor.disable(forInterval: TimeInterval(sender.tag))
     }
 
+    @IBAction func aboutClicked(_ sender: NSMenuItem) {
+        aboutWindow.showWindow(nil)
+    }
 }
