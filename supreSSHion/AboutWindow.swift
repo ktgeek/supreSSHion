@@ -28,6 +28,7 @@ class AboutWindow: NSWindowController, NSWindowDelegate {
     @IBOutlet weak var versionLabel: NSTextField!
 
     let versionString = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
+    let projectURL = "https://github.com/ktgeek/supreSSHion"
 
     override var windowNibName : String! {
         return "AboutWindow"
@@ -44,11 +45,11 @@ class AboutWindow: NSWindowController, NSWindowDelegate {
         self.window?.center()
         self.window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
-
-        // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     }
 
-    override func windowWillLoad() {
-        super.windowWillLoad()
+    @IBAction func linkClicked(_ sender: Any) {
+        let url = URL(string: projectURL)
+        NSWorkspace.shared().open(url!)
     }
+
 }
