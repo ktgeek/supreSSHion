@@ -45,19 +45,19 @@ class AgentSupervisor : NSObject {
             self, selector: #selector(self.screenUnlockedReceived),
             name: NSNotification.Name(rawValue: "com.apple.screenIsUnlocked"), object: nil)
 
-        NSWorkspace.shared().notificationCenter.addObserver(
+        NSWorkspace.shared.notificationCenter.addObserver(
             self, selector: #selector(self.workplaceWillSleepReceived),
-            name: NSNotification.Name.NSWorkspaceWillSleep, object: nil)
+            name: NSWorkspace.willSleepNotification, object: nil)
     }
 
-    func screenLockedReceived() {
+    @objc func screenLockedReceived() {
         screenIsLocked = true
         if !supressionState.isDisabled {
             removeKeysNow()
         }
     }
 
-    func screenUnlockedReceived() {
+    @objc func screenUnlockedReceived() {
         screenIsLocked = false
     }
 
@@ -65,7 +65,7 @@ class AgentSupervisor : NSObject {
     // OS X sleeps it issues a sleep notification and then a screen
     // lock notification so we only reset the supressionState on the
     // sleep notification.
-    func workplaceWillSleepReceived() {
+    @objc func workplaceWillSleepReceived() {
         supressionState.resume()
         timerEarlyExit()
     }
@@ -126,7 +126,7 @@ class AgentSupervisor : NSObject {
     deinit {
         timerEarlyExit()
         DistributedNotificationCenter.default().removeObserver(self)
-        NSWorkspace.shared().notificationCenter.removeObserver(self)
+        NSWorkspace.shared.notificationCenter.removeObserver(self)
     }
 }
 

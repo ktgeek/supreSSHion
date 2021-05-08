@@ -28,7 +28,7 @@ class StatusMenuController : NSObject, NSMenuDelegate {
     @IBOutlet weak var resumeItem: NSMenuItem!
     @IBOutlet weak var keysItem: NSMenuItem!
 
-    let statusItem = NSStatusBar.system().statusItem(withLength: NSVariableStatusItemLength)
+    let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     var supresshionState: SupresshionState
     var agentSupervisor: AgentSupervisor
     var aboutWindow: AboutWindow!
@@ -49,7 +49,7 @@ class StatusMenuController : NSObject, NSMenuDelegate {
     }
 
     @IBAction func quitClicked(sender: NSMenuItem) {
-        NSApplication.shared().terminate(self)
+        NSApplication.shared.terminate(self)
     }
 
     // Manually clicking remove keys ALWAYS overrides being disabled

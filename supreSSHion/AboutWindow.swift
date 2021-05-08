@@ -49,7 +49,7 @@ class AboutWindow: NSWindowController, NSWindowDelegate {
 
     @IBAction func linkClicked(_ sender: Any) {
         let url = URL(string: projectURL)
-        NSWorkspace.shared().open(url!)
+        NSWorkspace.shared.open(url!)
     }
 
 }
