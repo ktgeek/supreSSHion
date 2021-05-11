@@ -8,6 +8,8 @@ user.
 
 ![supreSSHion screenshot](doc/supresshion_screenshot.png)
 
+Minimum version of macOS for the build is macOS 14.x/Sonoma.
+
 ## History
 
 Best practice is to unload your ssh keys from ssh-agent when you're
@@ -17,7 +19,7 @@ remembers to do this themselves.
 Long ago I used a tool called SSHKeyChain that filled in for ssh-agent
 before OS X had it well integrated. Besides asking you for your key
 when it was needed, it would remove the keys on certain events such as
-the screen locking. 
+the screen locking.
 
 SSHKeyChain fell out of support and then a friend of mine wrote a [blog
 post](https://www.dribin.org/dave/blog/archives/2007/11/28/securing_ssh_agent/)
@@ -51,7 +53,7 @@ automatically creates that environmental variable when you log in.
 If the key removal functionality is disabled lock events will not
 trigger key removal. When the screen is locked and the expiration
 time of the disable has been reached the keys will be removed.
- 
+
 When a sleep event is received, it will reactivate the key removal if
 the user had disabled the key unloading functionality.
 
