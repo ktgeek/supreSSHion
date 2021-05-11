@@ -1,7 +1,7 @@
 supreSSHion
 ===========
 
-An OS X menubar agent that listens for screen lock and sleep events
+A macOS menubar agent that listens for screen lock and sleep events
 and then communicates with ssh-agent to unload keys from memory. It
 can also temporarily disable this functionality as requested by the
 user.
@@ -45,7 +45,7 @@ is locked" and "workplace will sleep" events.
 
 When it receives a lock event, it communicates to ssh-agent over its
 unix socket asking ssh-agent to unload all known keys. It locates the
-unix socket by the SSH_AUTH_SOCK environmental variable. OS X
+unix socket by the SSH_AUTH_SOCK environmental variable. macOS
 automatically creates that environmental variable when you log in.
 
 If the key removal functionality is disabled lock events will not
