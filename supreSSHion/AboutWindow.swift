@@ -1,6 +1,6 @@
-//// MIT License
+// MIT License
 //
-// Copyright (c) 2018-2020 Keith Garner
+// Copyright (c) 2018-2026 Keith Garner
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,36 +20,61 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
 import Cocoa
+import SwiftUI
+
+private struct AboutView: View {
+    let version = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
+    let projectURL = URL(string: "https://github.com/ktgeek/supreSSHion")!
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 16) {
+            Image("AboutImage")
+                .resizable()
+                .frame(width: 96, height: 96)
+
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(alignment: .firstTextBaseline, spacing: 4) {
+                    Text("supreSSHion")
+                        .font(.headline)
+                    Text(version)
+                        .foregroundStyle(.secondary)
+                }
+
+                Link("https://github.com/ktgeek/supreSSHion", destination: projectURL)
+
+                Spacer()
+
+                Text("© 2020-2026 Keith T. Garner")
+                    .font(.caption)
+                Text("MIT License")
+                    .font(.caption)
+                Text("App icon \"Forget\" by Gregor Cresnar from the Noun Project, licensed under CC BY.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding([.horizontal, .top])
+        .padding(.bottom, 44)
+        .frame(width: 460, height: 168)
+    }
+}
 
 class AboutWindow: NSWindowController, NSWindowDelegate {
-
-    @IBOutlet weak var versionLabel: NSTextField!
-
-    let versionString = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
-    let projectURL = "https://github.com/ktgeek/supreSSHion"
-
-    override var windowNibName : String! {
-        return "AboutWindow"
+    convenience init() {
+        let window = NSWindow(contentViewController: NSHostingController(rootView: AboutView()))
+        window.styleMask = [.titled, .closable]
+        window.titleVisibility = .hidden
+        window.titlebarAppearsTransparent = true
+        window.isReleasedWhenClosed = false
+        self.init(window: window)
+        window.delegate = self
     }
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        versionLabel.stringValue = versionString
-    }
-
-    override func windowDidLoad() {
-        super.windowDidLoad()
-
-        self.window?.center()
-        self.window?.makeKeyAndOrderFront(nil)
+    override func showWindow(_ sender: Any?) {
+        window?.center()
+        window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
-
-    @IBAction func linkClicked(_ sender: Any) {
-        let url = URL(string: projectURL)
-        NSWorkspace.shared.open(url!)
-    }
-
 }

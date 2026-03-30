@@ -15,7 +15,6 @@
 		DE3EE3E6207BD19E00536B64 /* SSHAgentCommunicator.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E5207BD19E00536B64 /* SSHAgentCommunicator.m */; };
 		DE3EE3E9207BE44900536B64 /* AgentSupervisor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E8207BE44900536B64 /* AgentSupervisor.swift */; };
 		DE8645B3210962280069C39B /* AboutWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8645B1210962280069C39B /* AboutWindow.swift */; };
-		DE8645B4210962280069C39B /* AboutWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = DE8645B2210962280069C39B /* AboutWindow.xib */; };
 		DE973DDB207C1E13002DEDC5 /* SupresshionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE973DDA207C1E13002DEDC5 /* SupresshionState.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,7 +33,6 @@
 		DE3EE3E7207BD27F00536B64 /* SSHAgentCommunicator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSHAgentCommunicator.h; sourceTree = "<group>"; };
 		DE3EE3E8207BE44900536B64 /* AgentSupervisor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentSupervisor.swift; sourceTree = "<group>"; };
 		DE8645B1210962280069C39B /* AboutWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindow.swift; sourceTree = "<group>"; };
-		DE8645B2210962280069C39B /* AboutWindow.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AboutWindow.xib; sourceTree = "<group>"; };
 		DE973DDA207C1E13002DEDC5 /* SupresshionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupresshionState.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -69,8 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				DE8645B1210962280069C39B /* AboutWindow.swift */,
-				DE8645B2210962280069C39B /* AboutWindow.xib */,
-				DE3EE3B5207B923900536B64 /* AppDelegate.h */,
+					DE3EE3B5207B923900536B64 /* AppDelegate.h */,
 				DE3EE3B6207B923900536B64 /* AppDelegate.m */,
 				DE3EE3B8207B923900536B64 /* Assets.xcassets */,
 				DE3EE3BA207B923900536B64 /* MainMenu.xib */,
@@ -153,8 +150,7 @@
 			files = (
 				DE3EE3B9207B923900536B64 /* Assets.xcassets in Resources */,
 				DE3EE3BC207B923900536B64 /* MainMenu.xib in Resources */,
-				DE8645B4210962280069C39B /* AboutWindow.xib in Resources */,
-			);
+				);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
