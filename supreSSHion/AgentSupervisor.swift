@@ -30,6 +30,8 @@ class AgentSupervisor : NSObject {
     var disableTimer: Timer?
     var screenIsLocked = false
     var keysLoadedMessage: String = ""
+    var loadedKeysCount: Int = 0
+    var loadedKeys: [SSHKey] = []
 
     init(state:SupresshionState) {
         supressionState = state
@@ -120,9 +122,18 @@ class AgentSupervisor : NSObject {
     }
 
     func refreshKeysCount() {
-        let sshAgentCommicator = SSHAgentCommunicator()
-        let keys = sshAgentCommicator.getNumberOfKeysLoaded()
-        keysLoadedMessage = "\(keys) \(keys == 1 ? "key" : "keys") loaded"
+        let communicator = SSHAgentCommunicator()
+        let rawKeys = (communicator.getLoadedKeys()) ?? []
+        loadedKeysCount = rawKeys.count
+        keysLoadedMessage = "\(rawKeys.count) \(rawKeys.count == 1 ? "key" : "keys") loaded"
+    }
+
+    func fetchLoadedKeys() {
+        let communicator = SSHAgentCommunicator()
+        let rawKeys = (communicator.getLoadedKeys()) ?? []
+        loadedKeys = rawKeys.map {
+            SSHKey(type: $0["type"] ?? "", fingerprint: $0["fingerprint"] ?? "", comment: $0["comment"] ?? "")
+        }
     }
 
     deinit {

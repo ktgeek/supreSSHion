@@ -20,16 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#import <Foundation/Foundation.h>
+import Foundation
 
-@interface SSHAgentCommunicator : NSObject
-
-- (id)initWithSocketPath: (NSString *)socketPath;
-
-@property (strong) NSString* sshAgentSocketPath;
-
-- (void)removeKeys;
-- (int64_t)getNumberOfKeysLoaded;
-- (NSArray<NSDictionary<NSString*,NSString*>*>*)getLoadedKeys;
-
-@end
+struct SSHKey: Identifiable {
+    let id = UUID()
+    let type: String
+    let fingerprint: String
+    let comment: String
+}

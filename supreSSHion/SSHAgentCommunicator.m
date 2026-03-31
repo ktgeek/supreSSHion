@@ -24,6 +24,17 @@
 #include <sys/types.h>
 #include <sys/un.h>
 #include <sys/socket.h>
+#import <CommonCrypto/CommonDigest.h>
+
+static uint32_t readUInt32(const uint8_t *buf, size_t offset) {
+    uint32_t val;
+    memcpy(&val, buf + offset, 4);
+    return ntohl(val);
+}
+
+static NSString *readNSString(const uint8_t *buf, size_t offset, uint32_t len) {
+    return [[NSString alloc] initWithBytes:buf + offset length:len encoding:NSUTF8StringEncoding] ?: @"";
+}
 
 #define SSH_AGENT_SUCCESS 0x6
 #define SSH_AGENT_FAILURE 0x5
@@ -145,5 +156,77 @@
 
     close(socket);
     return nKeys;
+}
+
+- (NSArray<NSDictionary<NSString*,NSString*>*>*)getLoadedKeys {
+    int socket = self.getConnectedSocket;
+
+    uint8_t cmdBuffer[5];
+    uint32_t messageLength = htonl(1);
+    memcpy(cmdBuffer, &messageLength, 4);
+    cmdBuffer[4] = SSH_AGENTC_REQUEST_IDENTITIES;
+    send(socket, cmdBuffer, 5, 0);
+
+    recv(socket, cmdBuffer, 5, MSG_WAITALL);
+    memcpy(&messageLength, cmdBuffer, 4);
+    messageLength = ntohl(messageLength);
+
+    if (cmdBuffer[4] != SSH_AGENT_IDENTITIES_ANSWER) {
+        NSLog(@"Failure getting list of keys");
+        close(socket);
+        return @[];
+    }
+
+    uint8_t nKeysBuf[4];
+    recv(socket, nKeysBuf, 4, MSG_WAITALL);
+    uint32_t nKeys = readUInt32(nKeysBuf, 0);
+
+    uint32_t payloadLength = messageLength - 5;
+    if (payloadLength == 0) {
+        close(socket);
+        return @[];
+    }
+
+    uint8_t *payload = malloc(payloadLength);
+    recv(socket, payload, payloadLength, MSG_WAITALL);
+    close(socket);
+
+    NSMutableArray *keys = [NSMutableArray arrayWithCapacity:nKeys];
+    size_t offset = 0;
+
+    for (uint32_t i = 0; i < nKeys && offset + 4 <= payloadLength; i++) {
+        // Key blob
+        uint32_t blobLen = readUInt32(payload, offset);
+        offset += 4;
+        if (offset + blobLen > payloadLength) break;
+
+        // Fingerprint: SHA256 of the raw key blob
+        unsigned char digest[CC_SHA256_DIGEST_LENGTH];
+        CC_SHA256(payload + offset, blobLen, digest);
+        NSData *digestData = [NSData dataWithBytes:digest length:CC_SHA256_DIGEST_LENGTH];
+        NSString *b64 = [digestData base64EncodedStringWithOptions:0];
+        // Remove trailing '=' padding to match ssh-keygen output
+        b64 = [b64 stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"="]];
+        NSString *fingerprint = [@"SHA256:" stringByAppendingString:b64];
+
+        // Key type: first length-prefixed string inside the blob
+        uint32_t typeLen = readUInt32(payload, offset);
+        NSString *keyType = readNSString(payload, offset + 4, typeLen);
+
+        offset += blobLen;
+
+        // Comment
+        if (offset + 4 > payloadLength) break;
+        uint32_t commentLen = readUInt32(payload, offset);
+        offset += 4;
+        if (offset + commentLen > payloadLength) break;
+        NSString *comment = readNSString(payload, offset, commentLen);
+        offset += commentLen;
+
+        [keys addObject:@{@"type": keyType, @"fingerprint": fingerprint, @"comment": comment}];
+    }
+
+    free(payload);
+    return keys;
 }
 @end

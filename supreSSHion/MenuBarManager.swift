@@ -26,6 +26,7 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let supervisor = AgentSupervisor(state: SupresshionState())
     private var aboutWindow: AboutWindow!
+    private var keysWindow: KeysWindow!
 
     private weak var stateItem: NSMenuItem?
     private weak var keysItem: NSMenuItem?
@@ -41,16 +42,19 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
         statusItem.menu = menu
 
         aboutWindow = AboutWindow()
+        keysWindow = KeysWindow(supervisor: supervisor)
     }
 
     private func buildMenu() -> NSMenu {
         let menu = NSMenu()
+        menu.autoenablesItems = false
 
         let state = menu.addItem(withTitle: "", action: nil, keyEquivalent: "")
         state.isEnabled = false
         stateItem = state
 
-        let keys = menu.addItem(withTitle: "", action: nil, keyEquivalent: "")
+        let keys = menu.addItem(withTitle: "", action: #selector(showKeysAction), keyEquivalent: "")
+        keys.target = self
         keys.isEnabled = false
         keysItem = keys
 
@@ -93,6 +97,7 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
         supervisor.refreshKeysCount()
         stateItem?.title = supervisor.supressionState.statusMessage
         keysItem?.title = supervisor.keysLoadedMessage
+        keysItem?.isEnabled = supervisor.loadedKeysCount > 0
         resumeItem?.isHidden = !supervisor.supressionState.isDisabled
     }
 
@@ -100,6 +105,10 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc private func untilResumedAction() { supervisor.disable() }
     @objc private func timeAction(_ sender: NSMenuItem) { supervisor.disable(forInterval: TimeInterval(sender.tag)) }
     @objc private func removeSSHKeysAction() { supervisor.removeKeysNow() }
+    @objc private func showKeysAction() {
+        supervisor.fetchLoadedKeys()
+        keysWindow.showWindow(nil)
+    }
     @objc private func aboutAction() { aboutWindow.showWindow(nil) }
     @objc private func quitAction() { NSApplication.shared.terminate(self) }
 }
