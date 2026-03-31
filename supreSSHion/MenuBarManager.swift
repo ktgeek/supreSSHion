@@ -21,13 +21,6 @@
 // SOFTWARE.
 
 import Cocoa
-import SwiftUI
-
-@main
-struct SupreSSHionApp: App {
-    @NSApplicationDelegateAdaptor(MenuBarManager.self) var menuBarManager
-    var body: some Scene { Settings { EmptyView() } }
-}
 
 class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
