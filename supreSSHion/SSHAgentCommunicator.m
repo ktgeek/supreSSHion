@@ -45,6 +45,7 @@ static NSString *readNSString(const uint8_t *buf, size_t offset, uint32_t len) {
 
 @interface SSHAgentCommunicator ()
 - (int)getConnectedSocket;
+- (void)sendCommand:(uint8_t)cmd toSocket:(int)sock;
 @end
 
 @implementation SSHAgentCommunicator
@@ -77,19 +78,23 @@ static NSString *readNSString(const uint8_t *buf, size_t offset, uint32_t len) {
     return ssh_agent_socket;
 }
 
+- (void)sendCommand:(uint8_t)cmd toSocket:(int)sock {
+    uint8_t buf[5];
+    uint32_t len = htonl(1);
+    memcpy(buf, &len, 4);
+    buf[4] = cmd;
+    send(sock, buf, 5, 0);
+}
+
 - (void)removeKeys {
     int socket = self.getConnectedSocket;
+    [self sendCommand:SSH_AGENTC_REMOVE_ALL_IDENTITIES toSocket:socket];
 
-    // Per ssh communication, uint32 of message length (in our case the one byte following) and
-    // then the message type which is SSH_AGENTC_REMOVE_ALL_IDENTITIES
     uint8_t buffer[5];
-    uint32_t messageLength = htonl(1);
-    memcpy(buffer, &messageLength, 4);
-    buffer[4] = SSH_AGENTC_REMOVE_ALL_IDENTITIES;
-    send(socket, buffer, 5, 0);
 
     recv(socket, buffer, 5, MSG_WAITALL);
 
+    uint32_t messageLength;
     memcpy(&messageLength, buffer, 4);
     messageLength = ntohl(messageLength);
 
@@ -106,68 +111,13 @@ static NSString *readNSString(const uint8_t *buf, size_t offset, uint32_t len) {
     close(socket);
 }
 
-- (int64_t)getNumberOfKeysLoaded {
-    int socket = self.getConnectedSocket;
-
-    uint8_t cmdBuffer[5];
-    uint32_t messageLength = htonl(1);
-    memcpy(cmdBuffer, &messageLength, 4);
-    cmdBuffer[4] = SSH_AGENTC_REQUEST_IDENTITIES;
-    send(socket, cmdBuffer, 5, 0);
-
-    recv(socket, cmdBuffer, 5, MSG_WAITALL);
-
-    memcpy(&messageLength, cmdBuffer, 4);
-    messageLength = ntohl(messageLength);
-
-    // TODO: Turn this into a generic function if possible/nessessary.
-    if (cmdBuffer[4] != SSH_AGENT_IDENTITIES_ANSWER)
-    {
-        NSLog(@"Failure getting list of keys");
-        // We are closing the socket pretty hard core without reading
-        // all the data... will this cause us problems in the future?
-        close(socket);
-
-        // Can't use an NSException up in swift land, so this will
-        // just break everything if it gets tossed. TODO: fix this
-        NSException *e = [NSException
-                            exceptionWithName:@"KeyRetreivalEception"
-                            reason:@"SSH_AGENT_IDENTITIES_ANSWER not returned"
-                            userInfo:nil];
-        @throw e;
-    }
-
-    recv(socket, cmdBuffer, 4, MSG_WAITALL);
-
-    uint32_t nKeys;
-    memcpy(&nKeys, cmdBuffer, 4);
-    nKeys = ntohl(nKeys);
-
-    // If we made it this far, let us remove the byte for the command
-    // and the 4 bytes for the number of keys
-    messageLength = messageLength - 5;
-
-    // Right now we aren't doing anything with the keys returned,
-    // but we'll swallow the data to not make the agent mad.
-    uint8_t keyBuffer[messageLength];
-    if (messageLength > 0) {
-        recv(socket, keyBuffer, messageLength, MSG_WAITALL);
-    }
-
-    close(socket);
-    return nKeys;
-}
-
 - (NSArray<NSDictionary<NSString*,NSString*>*>*)getLoadedKeys {
     int socket = self.getConnectedSocket;
+    [self sendCommand:SSH_AGENTC_REQUEST_IDENTITIES toSocket:socket];
 
     uint8_t cmdBuffer[5];
-    uint32_t messageLength = htonl(1);
-    memcpy(cmdBuffer, &messageLength, 4);
-    cmdBuffer[4] = SSH_AGENTC_REQUEST_IDENTITIES;
-    send(socket, cmdBuffer, 5, 0);
-
     recv(socket, cmdBuffer, 5, MSG_WAITALL);
+    uint32_t messageLength;
     memcpy(&messageLength, cmdBuffer, 4);
     messageLength = ntohl(messageLength);
 

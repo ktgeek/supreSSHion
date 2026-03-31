@@ -29,7 +29,6 @@
 @property (strong) NSString* sshAgentSocketPath;
 
 - (void)removeKeys;
-- (int64_t)getNumberOfKeysLoaded;
 - (NSArray<NSDictionary<NSString*,NSString*>*>*)getLoadedKeys;
 
 @end
