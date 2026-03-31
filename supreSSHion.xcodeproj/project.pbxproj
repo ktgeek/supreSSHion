@@ -10,7 +10,7 @@
 		DE3EE3B9207B923900536B64 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE3EE3B8207B923900536B64 /* Assets.xcassets */; };
 		DE3EE3E4207BCE2900536B64 /* SupreSSHionApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E3207BCE2900536B64 /* SupreSSHionApp.swift */; };
 		DEA100001000000000000001 /* MenuBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100001000000000000002 /* MenuBarManager.swift */; };
-		DE3EE3E6207BD19E00536B64 /* SSHAgentCommunicator.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E5207BD19E00536B64 /* SSHAgentCommunicator.m */; };
+		AA000002000000000000001 /* SSHAgentCommunicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001000000000000001 /* SSHAgentCommunicator.swift */; };
 		DE3EE3E9207BE44900536B64 /* AgentSupervisor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E8207BE44900536B64 /* AgentSupervisor.swift */; };
 		DE8645B3210962280069C39B /* AboutWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE8645B1210962280069C39B /* AboutWindow.swift */; };
 		DEA100002000000000000001 /* SSHKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100002000000000000002 /* SSHKey.swift */; };
@@ -23,11 +23,9 @@
 		DE3EE3B8207B923900536B64 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DE3EE3BD207B923900536B64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DE3EE3C0207B923900536B64 /* supreSSHion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = supreSSHion.entitlements; sourceTree = "<group>"; };
-		DE3EE3E2207BCE2900536B64 /* supreSSHion-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "supreSSHion-Bridging-Header.h"; sourceTree = "<group>"; };
 		DE3EE3E3207BCE2900536B64 /* SupreSSHionApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupreSSHionApp.swift; sourceTree = "<group>"; };
 		DEA100001000000000000002 /* MenuBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarManager.swift; sourceTree = "<group>"; };
-		DE3EE3E5207BD19E00536B64 /* SSHAgentCommunicator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SSHAgentCommunicator.m; sourceTree = "<group>"; };
-		DE3EE3E7207BD27F00536B64 /* SSHAgentCommunicator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SSHAgentCommunicator.h; sourceTree = "<group>"; };
+		AA000001000000000000001 /* SSHAgentCommunicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHAgentCommunicator.swift; sourceTree = "<group>"; };
 		DE3EE3E8207BE44900536B64 /* AgentSupervisor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentSupervisor.swift; sourceTree = "<group>"; };
 		DE8645B1210962280069C39B /* AboutWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindow.swift; sourceTree = "<group>"; };
 		DEA100002000000000000002 /* SSHKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHKey.swift; sourceTree = "<group>"; };
@@ -73,11 +71,9 @@
 				DE3EE3E3207BCE2900536B64 /* SupreSSHionApp.swift */,
 				DE973DDA207C1E13002DEDC5 /* SupresshionState.swift */,
 				DE3EE3E8207BE44900536B64 /* AgentSupervisor.swift */,
-				DE3EE3E7207BD27F00536B64 /* SSHAgentCommunicator.h */,
-				DE3EE3E5207BD19E00536B64 /* SSHAgentCommunicator.m */,
+				AA000001000000000000001 /* SSHAgentCommunicator.swift */,
 				DE3EE3BD207B923900536B64 /* Info.plist */,
 				DE3EE3C0207B923900536B64 /* supreSSHion.entitlements */,
-				DE3EE3E2207BCE2900536B64 /* supreSSHion-Bridging-Header.h */,
 			);
 			path = supreSSHion;
 			sourceTree = "<group>";
@@ -161,7 +157,7 @@
 				DE3EE3E4207BCE2900536B64 /* SupreSSHionApp.swift in Sources */,
 				DEA100001000000000000001 /* MenuBarManager.swift in Sources */,
 				DE3EE3E9207BE44900536B64 /* AgentSupervisor.swift in Sources */,
-				DE3EE3E6207BD19E00536B64 /* SSHAgentCommunicator.m in Sources */,
+				AA000002000000000000001 /* SSHAgentCommunicator.swift in Sources */,
 				DE8645B3210962280069C39B /* AboutWindow.swift in Sources */,
 				DEA100002000000000000001 /* SSHKey.swift in Sources */,
 				DEA100003000000000000001 /* KeysWindow.swift in Sources */,
@@ -315,7 +311,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.kgarner.supreSSHion;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "supreSSHion/supreSSHion-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
@@ -343,7 +338,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.kgarner.supreSSHion;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				SWIFT_OBJC_BRIDGING_HEADER = "supreSSHion/supreSSHion-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 			};
