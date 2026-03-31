@@ -7,10 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DE3EE3B7207B923900536B64 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3B6207B923900536B64 /* AppDelegate.m */; };
 		DE3EE3B9207B923900536B64 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE3EE3B8207B923900536B64 /* Assets.xcassets */; };
-		DE3EE3BC207B923900536B64 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = DE3EE3BA207B923900536B64 /* MainMenu.xib */; };
-		DE3EE3BF207B923900536B64 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3BE207B923900536B64 /* main.m */; };
 		DE3EE3E4207BCE2900536B64 /* StatusMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E3207BCE2900536B64 /* StatusMenuController.swift */; };
 		DE3EE3E6207BD19E00536B64 /* SSHAgentCommunicator.m in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E5207BD19E00536B64 /* SSHAgentCommunicator.m */; };
 		DE3EE3E9207BE44900536B64 /* AgentSupervisor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE3EE3E8207BE44900536B64 /* AgentSupervisor.swift */; };
@@ -20,12 +17,8 @@
 
 /* Begin PBXFileReference section */
 		DE3EE3B2207B923900536B64 /* supreSSHion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = supreSSHion.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		DE3EE3B5207B923900536B64 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		DE3EE3B6207B923900536B64 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		DE3EE3B8207B923900536B64 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		DE3EE3BB207B923900536B64 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		DE3EE3BD207B923900536B64 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DE3EE3BE207B923900536B64 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		DE3EE3C0207B923900536B64 /* supreSSHion.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = supreSSHion.entitlements; sourceTree = "<group>"; };
 		DE3EE3E2207BCE2900536B64 /* supreSSHion-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "supreSSHion-Bridging-Header.h"; sourceTree = "<group>"; };
 		DE3EE3E3207BCE2900536B64 /* StatusMenuController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusMenuController.swift; sourceTree = "<group>"; };
@@ -67,17 +60,13 @@
 			isa = PBXGroup;
 			children = (
 				DE8645B1210962280069C39B /* AboutWindow.swift */,
-					DE3EE3B5207B923900536B64 /* AppDelegate.h */,
-				DE3EE3B6207B923900536B64 /* AppDelegate.m */,
 				DE3EE3B8207B923900536B64 /* Assets.xcassets */,
-				DE3EE3BA207B923900536B64 /* MainMenu.xib */,
 				DE3EE3E3207BCE2900536B64 /* StatusMenuController.swift */,
 				DE973DDA207C1E13002DEDC5 /* SupresshionState.swift */,
 				DE3EE3E8207BE44900536B64 /* AgentSupervisor.swift */,
 				DE3EE3E7207BD27F00536B64 /* SSHAgentCommunicator.h */,
 				DE3EE3E5207BD19E00536B64 /* SSHAgentCommunicator.m */,
 				DE3EE3BD207B923900536B64 /* Info.plist */,
-				DE3EE3BE207B923900536B64 /* main.m */,
 				DE3EE3C0207B923900536B64 /* supreSSHion.entitlements */,
 				DE3EE3E2207BCE2900536B64 /* supreSSHion-Bridging-Header.h */,
 			);
@@ -149,8 +138,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DE3EE3B9207B923900536B64 /* Assets.xcassets in Resources */,
-				DE3EE3BC207B923900536B64 /* MainMenu.xib in Resources */,
-				);
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
@@ -162,8 +150,6 @@
 			files = (
 				DE973DDB207C1E13002DEDC5 /* SupresshionState.swift in Sources */,
 				DE3EE3E4207BCE2900536B64 /* StatusMenuController.swift in Sources */,
-				DE3EE3BF207B923900536B64 /* main.m in Sources */,
-				DE3EE3B7207B923900536B64 /* AppDelegate.m in Sources */,
 				DE3EE3E9207BE44900536B64 /* AgentSupervisor.swift in Sources */,
 				DE3EE3E6207BD19E00536B64 /* SSHAgentCommunicator.m in Sources */,
 				DE8645B3210962280069C39B /* AboutWindow.swift in Sources */,
@@ -172,16 +158,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXVariantGroup section */
-		DE3EE3BA207B923900536B64 /* MainMenu.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				DE3EE3BB207B923900536B64 /* Base */,
-			);
-			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		DE3EE3D7207B923A00536B64 /* Debug */ = {

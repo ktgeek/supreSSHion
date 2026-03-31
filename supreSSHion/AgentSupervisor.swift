@@ -22,11 +22,14 @@
 
 import Foundation
 import AppKit
+import Observation
 
+@Observable
 class AgentSupervisor : NSObject {
     var supressionState: SupresshionState
     var disableTimer: Timer?
     var screenIsLocked = false
+    var keysLoadedMessage: String = ""
 
     init(state:SupresshionState) {
         supressionState = state
@@ -48,6 +51,8 @@ class AgentSupervisor : NSObject {
         NSWorkspace.shared.notificationCenter.addObserver(
             self, selector: #selector(self.workplaceWillSleepReceived),
             name: NSWorkspace.willSleepNotification, object: nil)
+
+        refreshKeysCount()
     }
 
     @objc func screenLockedReceived() {
@@ -59,6 +64,7 @@ class AgentSupervisor : NSObject {
 
     @objc func screenUnlockedReceived() {
         screenIsLocked = false
+        refreshKeysCount()
     }
 
     // sleeping automatically resumes the key removal behavior. When
@@ -73,6 +79,7 @@ class AgentSupervisor : NSObject {
     func removeKeysNow() {
         let sshAgentCommicator = SSHAgentCommunicator()
         sshAgentCommicator.removeKeys()
+        refreshKeysCount()
     }
 
     func resume() {
@@ -112,15 +119,10 @@ class AgentSupervisor : NSObject {
         disableTimer = nil
     }
 
-    var keysLoadedMessage: String {
-        get {
-            let sshAgentCommicator = SSHAgentCommunicator()
-
-            let keys = sshAgentCommicator.getNumberOfKeysLoaded()
-            let keyString = keys == 1 ? "key" : "keys"
-
-            return "\(keys) \(keyString) loaded"
-        }
+    func refreshKeysCount() {
+        let sshAgentCommicator = SSHAgentCommunicator()
+        let keys = sshAgentCommicator.getNumberOfKeysLoaded()
+        keysLoadedMessage = "\(keys) \(keys == 1 ? "key" : "keys") loaded"
     }
 
     deinit {

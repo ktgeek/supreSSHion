@@ -21,8 +21,10 @@
 // SOFTWARE.
 
 import Foundation
+import Observation
 
-class SupresshionState : NSObject {
+@Observable
+class SupresshionState {
 
     private var infinatelyDisabled = false
     private var disabledUntil: Date?
