@@ -1,81 +1,44 @@
-supreSSHion
-===========
+# supreSSHion
 
-A macOS menubar agent that listens for screen lock and sleep events
-and then communicates with ssh-agent to unload keys from memory. It
-can also temporarily disable this functionality as requested by the
-user.
+A macOS menu bar agent that listens for screen lock and sleep events and then communicates with ssh-agent to unload keys
+from memory. It can also temporarily disable this functionality as requested by the user.
 
 ![supreSSHion screenshot](doc/supresshion_screenshot.png)
 
-Minimum version of macOS for the build is macOS 14.x/Sonoma.
-
-## History
-
-Best practice is to unload your ssh keys from ssh-agent when you're
-not actively using them or not at your computer. The problem is no one
-remembers to do this themselves.
-
-Long ago I used a tool called SSHKeyChain that filled in for ssh-agent
-before OS X had it well integrated. Besides asking you for your key
-when it was needed, it would remove the keys on certain events such as
-the screen locking.
-
-SSHKeyChain fell out of support and then a friend of mine wrote a [blog
-post](https://www.dribin.org/dave/blog/archives/2007/11/28/securing_ssh_agent/)
-and a user deamon called
-[ssh_locker](https://github.com/ddribin/ssh_locker) to fill in that
-gap. I used ssh_locker for a long time and made
-[modifictions](https://github.com/ktgeek/ssh_locker) as times
-changed.
-
-One issue is that bringing this to users who are new to ssh and/or
-aren't familiar with compiling on OS X and/or up to speed with putting
-LaunchAgents in their Library, etc, etc, was problematic.
-Additionally, there have been some situations where I've wanted to
-temporarily disable the key unloading, which was not easy to do with
-the background daemon version of ssh_locker. For these reasons a menu
-bar application seemed like a good fit.
-
-After giving an internal talk on ssh at my company earlier in the
-year, I was inspired to finally turns this idea into reality.
+Minimum version of macOS is macOS 15.x/Sequoia.
 
 ## How it works
 
-When launched, supreSSHion registers itself as a listener for "screen
-is locked" and "workplace will sleep" events.
+When launched, supreSSHion registers itself as a listener for "screen is locked" and "workplace will sleep" events.
 
-When it receives a lock event, it communicates to ssh-agent over its
-unix socket asking ssh-agent to unload all known keys. It locates the
-unix socket by the SSH_AUTH_SOCK environmental variable. macOS
-automatically creates that environmental variable when you log in.
+When it receives a lock event, it communicates with ssh-agent over its unix socket asking ssh-agent to unload all known
+keys. It locates the unix socket by the SSH_AUTH_SOCK environment variable. macOS automatically creates that environment
+variable when you log in.
 
-If the key removal functionality is disabled lock events will not
-trigger key removal. When the screen is locked and the expiration
-time of the disable has been reached the keys will be removed.
+If the key removal functionality is disabled, lock events will not trigger key removal. When the screen is locked and
+the expiration time of the disable has been reached, the keys will be removed.
 
-When a sleep event is received, it will reactivate the key removal if
-the user had disabled the key unloading functionality.
+When a sleep event is received, it will reactivate the key removal if the user had disabled the key unloading
+functionality.
 
+### Additional Functionality
+
+* New in version 2.0, you can see which keys are loaded by selecting the "keys loaded" menu entry when there are keys
+  loaded into memory.
 
 ### What about loading my SSH key?
 
-You can add `AddKeysToAgent yes` to your ssh config. If your key isn't
-loaded when ssh is invoked, ssh will prompt you for your key. (You may
-also want to specify your key using `IdentityFile /path/to/id`.)
+You can add `AddKeysToAgent yes` to your ssh config. If your key isn't loaded when ssh is invoked, ssh will prompt you
+for your key. (You may also want to specify your key using `IdentityFile /path/to/id`.)
 
-This doesn't work in all cases where you might use ssh, but 99.99% of
-the time I'm invoking ssh from a terminal and it works very well for
-me.
+This doesn't work in all cases where you might use ssh, but 99.99% of the time I'm invoking ssh from a terminal and it
+works very well for me.
 
 ## License
 
-supreSSHion is distributed under the MIT free software license, and
-freely available for inclusion in other projects.
+supreSSHion is distributed under the MIT free software license, and freely available for inclusion in other projects.
 
 ## Credits
 
-App icon is [Forget by Gregor Cresnar from the Noun
-Project](https://thenounproject.com/term/forget/539392/). It is
-licensed under [Creative Commons
-CCBY](https://creativecommons.org/licenses/by/3.0/us/).
+App icon is [Forget by Gregor Cresnar from the Noun Project](https://thenounproject.com/term/forget/539392/). It is
+licensed under [Creative Commons CCBY](https://creativecommons.org/licenses/by/3.0/us/).
