@@ -130,10 +130,14 @@ class AgentSupervisor : NSObject {
 
     func fetchLoadedKeys() {
         let communicator = SSHAgentCommunicator()
-        let rawKeys = (communicator.getLoadedKeys()) ?? []
-        loadedKeys = rawKeys.map {
-            SSHKey(type: $0["type"] ?? "", fingerprint: $0["fingerprint"] ?? "", comment: $0["comment"] ?? "")
-        }
+        loadedKeys = communicator.getLoadedKeys() ?? []
+    }
+
+    func removeSelectedKeys(_ keys: [SSHKey]) {
+        let communicator = SSHAgentCommunicator()
+        for key in keys { communicator.removeKey(blob: key.keyBlob) }
+        refreshKeysCount()
+        fetchLoadedKeys()
     }
 
     deinit {

@@ -27,4 +27,5 @@ struct SSHKey: Identifiable {
     let type: String
     let fingerprint: String
     let comment: String
+    let keyBlob: Data
 }

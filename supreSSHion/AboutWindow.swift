@@ -74,7 +74,7 @@ class AboutWindow: NSWindowController, NSWindowDelegate {
 
     override func showWindow(_ sender: Any?) {
         window?.center()
-        window?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+        window?.makeKeyAndOrderFront(nil)
     }
 }

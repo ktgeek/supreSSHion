@@ -23,30 +23,59 @@
 import Cocoa
 import SwiftUI
 
-private func measureWidth(strings: [String], header: String,
-                          font: NSFont = .systemFont(ofSize: NSFont.systemFontSize)) -> CGFloat {
-    let attrs: [NSAttributedString.Key: Any] = [.font: font]
-    return (([header] + strings).map {
-        NSAttributedString(string: $0, attributes: attrs).size().width
-    }.max() ?? 0) + 8
-}
-
 private struct KeysView: View {
-    let keys: [SSHKey]
-    let typeWidth: CGFloat
-    let fingerprintWidth: CGFloat
-    let commentWidth: CGFloat
+    let supervisor: AgentSupervisor
+    @State private var selectedIDs: Set<UUID> = []
 
     var body: some View {
-        Table(keys) {
-            TableColumn("Type") { Text($0.type) }
-                .width(min: 40, ideal: typeWidth)
-            TableColumn("Fingerprint") { Text($0.fingerprint).font(.system(.body, design: .monospaced)) }
-                .width(min: 40, ideal: fingerprintWidth)
-            TableColumn("Comment") { Text($0.comment) }
-                .width(min: 40, ideal: commentWidth)
+        VStack(spacing: 0) {
+            Table(supervisor.loadedKeys, selection: $selectedIDs) {
+                TableColumn("") { key in
+                    Toggle("", isOn: Binding(
+                        get: { selectedIDs.contains(key.id) },
+                        set: { checked in
+                            if checked { selectedIDs.insert(key.id) }
+                            else { selectedIDs.remove(key.id) }
+                        }
+                    ))
+                    .toggleStyle(.checkbox)
+                }
+                .width(20)
+                TableColumn("Type") { Text($0.type) }
+                    .width(min: 60, ideal: 110)
+                TableColumn("Fingerprint") {
+                    Text($0.fingerprint).font(.system(.body, design: .monospaced))
+                }
+                .width(min: 100, ideal: 360)
+                TableColumn("Comment") { Text($0.comment) }
+                    .width(min: 40)
+            }
+            .frame(minHeight: 160)
+
+            Divider()
+
+            HStack {
+                Spacer()
+                Button("Remove Selected") {
+                    let toRemove = supervisor.loadedKeys.filter { selectedIDs.contains($0.id) }
+                    supervisor.removeSelectedKeys(toRemove)
+                    selectedIDs = []
+                }
+                .disabled(selectedIDs.isEmpty)
+
+                Button("Remove All") {
+                    supervisor.removeKeysNow()
+                    supervisor.fetchLoadedKeys()
+                    selectedIDs = []
+                }
+                .disabled(supervisor.loadedKeys.isEmpty)
+
+                Button("Refresh") {
+                    supervisor.fetchLoadedKeys()
+                }
+            }
+            .padding(8)
         }
-        .frame(minHeight: 160)
     }
 }
 
@@ -56,8 +85,7 @@ class KeysWindow: NSWindowController, NSWindowDelegate {
     init(supervisor: AgentSupervisor) {
         self.supervisor = supervisor
         let window = NSWindow(
-            contentViewController: NSHostingController(rootView: KeysView(
-                keys: [], typeWidth: 0, fingerprintWidth: 0, commentWidth: 0))
+            contentViewController: NSHostingController(rootView: KeysView(supervisor: supervisor))
         )
         window.styleMask = [.titled, .closable, .resizable]
         window.title = "Loaded SSH Keys"
@@ -69,23 +97,12 @@ class KeysWindow: NSWindowController, NSWindowDelegate {
     required init?(coder: NSCoder) { fatalError("init(coder:) not supported") }
 
     override func showWindow(_ sender: Any?) {
-        let keys     = supervisor.loadedKeys
-        let bodyFont = NSFont.systemFont(ofSize: NSFont.systemFontSize)
-        let monoFont = NSFont.monospacedSystemFont(ofSize: NSFont.systemFontSize, weight: .regular)
-        let typeWidth        = measureWidth(strings: keys.map(\.type),        header: "Type",        font: bodyFont)
-        let fingerprintWidth = measureWidth(strings: keys.map(\.fingerprint), header: "Fingerprint", font: monoFont)
-        let commentWidth     = measureWidth(strings: keys.map(\.comment),     header: "Comment",     font: bodyFont)
-
-        let contentWidth = min(typeWidth + fingerprintWidth + commentWidth + 60, 1100)
-        window?.contentViewController = NSHostingController(rootView: KeysView(
-            keys: keys,
-            typeWidth: typeWidth,
-            fingerprintWidth: fingerprintWidth,
-            commentWidth: commentWidth
-        ))
-        window?.setContentSize(NSSize(width: contentWidth, height: 200))
-        window?.center()
-        window?.makeKeyAndOrderFront(nil)
+        supervisor.fetchLoadedKeys()
+        if !(window?.isVisible ?? false) {
+            window?.setContentSize(NSSize(width: 760, height: 250))
+            window?.center()
+        }
         NSApp.activate(ignoringOtherApps: true)
+        window?.makeKeyAndOrderFront(nil)
     }
 }

@@ -27,6 +27,7 @@ import Foundation
 private let SSH_AGENT_SUCCESS: UInt8 = 0x06
 private let SSH_AGENT_IDENTITIES_ANSWER: UInt8 = 0x0c
 private let SSH_AGENTC_REQUEST_IDENTITIES: UInt8 = 0x0b
+private let SSH_AGENTC_REMOVE_IDENTITY: UInt8 = 0x12
 private let SSH_AGENTC_REMOVE_ALL_IDENTITIES: UInt8 = 0x13
 
 class SSHAgentCommunicator {
@@ -88,7 +89,26 @@ class SSHAgentCommunicator {
         }
     }
 
-    func getLoadedKeys() -> [[String: String]]? {
+    func removeKey(blob: Data) {
+        guard let fd = openSocket() else { return }
+        defer { Darwin.close(fd) }
+        let payloadLen = 1 + 4 + blob.count
+        var buf = Data(count: 4 + payloadLen)
+        withUnsafeBytes(of: UInt32(payloadLen).bigEndian) { buf.replaceSubrange(0..<4, with: $0) }
+        buf[4] = SSH_AGENTC_REMOVE_IDENTITY
+        withUnsafeBytes(of: UInt32(blob.count).bigEndian) { buf.replaceSubrange(5..<9, with: $0) }
+        buf.replaceSubrange(9..<9+blob.count, with: blob)
+        _ = buf.withUnsafeBytes { Darwin.send(fd, $0.baseAddress!, 4 + payloadLen, 0) }
+        guard let resp = recvAll(fd, count: 5) else { return }
+        let len = UInt32(bigEndian: resp.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
+        if len == 1 && resp[4] == SSH_AGENT_SUCCESS {
+            NSLog("Successfully removed key")
+        } else {
+            NSLog("Failure removing key from agent")
+        }
+    }
+
+    func getLoadedKeys() -> [SSHKey]? {
         guard let fd = openSocket() else { return nil }
         defer { Darwin.close(fd) }
         sendCommand(SSH_AGENTC_REQUEST_IDENTITIES, to: fd)
@@ -107,7 +127,7 @@ class SSHAgentCommunicator {
         guard payloadLen > 0 else { return [] }
         guard let payload = recvAll(fd, count: payloadLen) else { return nil }
 
-        var keys = [[String: String]]()
+        var keys = [SSHKey]()
         var offset = 0
 
         for _ in 0..<nKeys {
@@ -117,20 +137,17 @@ class SSHAgentCommunicator {
             offset += 4
             guard offset + blobLen <= payloadLen else { break }
 
-            // SHA-256 fingerprint of the raw key blob
             let blob = payload[offset..<offset + blobLen]
             let digest = SHA256.hash(data: blob)
             let b64 = Data(digest).base64EncodedString()
                 .trimmingCharacters(in: CharacterSet(charactersIn: "="))
             let fingerprint = "SHA256:" + b64
 
-            // Key type: first length-prefixed string inside the blob
             let typeLen = Int(UInt32(bigEndian: payload[offset..<offset+4]
                 .withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) }))
             let keyType = typeLen > 0 ? String(bytes: payload[offset+4..<offset+4+typeLen], encoding: .utf8) ?? "" : ""
             offset += blobLen
 
-            // Comment
             guard offset + 4 <= payloadLen else { break }
             let commentLen = Int(UInt32(bigEndian: payload[offset..<offset+4]
                 .withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) }))
@@ -139,7 +156,7 @@ class SSHAgentCommunicator {
             let comment = String(bytes: payload[offset..<offset+commentLen], encoding: .utf8) ?? ""
             offset += commentLen
 
-            keys.append(["type": keyType, "fingerprint": fingerprint, "comment": comment])
+            keys.append(SSHKey(type: keyType, fingerprint: fingerprint, comment: comment, keyBlob: Data(blob)))
         }
         return keys
     }
