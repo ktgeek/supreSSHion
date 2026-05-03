@@ -1,0 +1,20 @@
+{
+	"name": "xcode build server",
+	"version": "1.3.0",
+	"bspVersion": "2.2.0",
+	"languages": [
+		"c",
+		"cpp",
+		"objective-c",
+		"objective-cpp",
+		"swift"
+	],
+	"argv": [
+		"/usr/bin/env",
+		"xcode-build-server"
+	],
+	"workspace": "supreSSHion.xcodeproj/project.xcworkspace",
+	"build_root": "/YOUR/PATH/TO/Library/Developer/Xcode/DerivedData/supreSSHion-SoMeHaSh",
+	"scheme": "supreSSHion",
+	"kind": "xcode"
+}
