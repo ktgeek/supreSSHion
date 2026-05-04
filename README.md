@@ -5,6 +5,7 @@ from memory. It can also temporarily disable this functionality as requested by 
 and unload all or selected keys via a dialog.
 
 ![supreSSHion screenshot](doc/supresshion_screenshot.png)
+![key dialog screenshot](doc/key_dialog.png)
 
 Requires macOS 15 Sequoia or later.
 
