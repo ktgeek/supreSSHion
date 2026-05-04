@@ -79,7 +79,7 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         menu.addItem(.separator())
 
-        let removeKeys = menu.addItem(withTitle: "Remove SSH Keys", action: #selector(removeSSHKeysAction), keyEquivalent: "")
+        let removeKeys = menu.addItem(withTitle: "Remove All Keys", action: #selector(removeSSHKeysAction), keyEquivalent: "")
         removeKeys.target = self
 
         menu.addItem(.separator())
