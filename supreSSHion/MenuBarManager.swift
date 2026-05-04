@@ -74,7 +74,7 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let untilResumed = disableMenu.addItem(withTitle: "until resumed", action: #selector(untilResumedAction), keyEquivalent: "")
         untilResumed.target = self
 
-        let disableItem = menu.addItem(withTitle: "Disable...", action: nil, keyEquivalent: "")
+        let disableItem = menu.addItem(withTitle: "Disable…", action: nil, keyEquivalent: "")
         disableItem.submenu = disableMenu
 
         menu.addItem(.separator())
