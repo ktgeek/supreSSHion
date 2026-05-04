@@ -125,7 +125,9 @@ class AgentSupervisor : NSObject {
         let communicator = SSHAgentCommunicator()
         let rawKeys = (communicator.getLoadedKeys()) ?? []
         loadedKeysCount = rawKeys.count
-        keysLoadedMessage = "\(rawKeys.count) \(rawKeys.count == 1 ? "key" : "keys") loaded"
+        let implyDialog = loadedKeysCount == 0 ? "" : "…"
+        let plural = loadedKeysCount == 1 ? "" : "s"
+        keysLoadedMessage = "\(loadedKeysCount) key\(plural) loaded\(implyDialog)"
     }
 
     func fetchLoadedKeys() {
