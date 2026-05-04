@@ -24,13 +24,14 @@ import CryptoKit
 import Darwin
 import Foundation
 
-private let SSH_AGENT_SUCCESS: UInt8 = 0x06
-private let SSH_AGENT_IDENTITIES_ANSWER: UInt8 = 0x0c
-private let SSH_AGENTC_REQUEST_IDENTITIES: UInt8 = 0x0b
-private let SSH_AGENTC_REMOVE_IDENTITY: UInt8 = 0x12
-private let SSH_AGENTC_REMOVE_ALL_IDENTITIES: UInt8 = 0x13
-
 class SSHAgentCommunicator {
+    private static let SSH_AGENT_SUCCESS: UInt8 = 0x06
+    private static let SSH_AGENT_IDENTITIES_ANSWER: UInt8 = 0x0c
+    private static let SSH_AGENTC_REQUEST_IDENTITIES: UInt8 = 0x0b
+    private static let SSH_AGENTC_REMOVE_IDENTITY: UInt8 = 0x12
+    private static let SSH_AGENTC_REMOVE_ALL_IDENTITIES: UInt8 = 0x13
+
+    
     private let socketPath: String
 
     init() {
@@ -79,10 +80,10 @@ class SSHAgentCommunicator {
     func removeKeys() {
         guard let fd = openSocket() else { return }
         defer { Darwin.close(fd) }
-        sendCommand(SSH_AGENTC_REMOVE_ALL_IDENTITIES, to: fd)
+        sendCommand(SSHAgentCommunicator.SSH_AGENTC_REMOVE_ALL_IDENTITIES, to: fd)
         guard let resp = recvAll(fd, count: 5) else { return }
         let len = UInt32(bigEndian: resp.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
-        if len == 1 && resp[4] == SSH_AGENT_SUCCESS {
+        if len == 1 && resp[4] == SSHAgentCommunicator.SSH_AGENT_SUCCESS {
             NSLog("Successfully removed keys")
         } else {
             NSLog("Failure removing keys from agent")
@@ -95,13 +96,13 @@ class SSHAgentCommunicator {
         let payloadLen = 1 + 4 + blob.count
         var buf = Data(count: 4 + payloadLen)
         withUnsafeBytes(of: UInt32(payloadLen).bigEndian) { buf.replaceSubrange(0..<4, with: $0) }
-        buf[4] = SSH_AGENTC_REMOVE_IDENTITY
+        buf[4] = SSHAgentCommunicator.SSH_AGENTC_REMOVE_IDENTITY
         withUnsafeBytes(of: UInt32(blob.count).bigEndian) { buf.replaceSubrange(5..<9, with: $0) }
         buf.replaceSubrange(9..<9+blob.count, with: blob)
         _ = buf.withUnsafeBytes { Darwin.send(fd, $0.baseAddress!, 4 + payloadLen, 0) }
         guard let resp = recvAll(fd, count: 5) else { return }
         let len = UInt32(bigEndian: resp.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
-        if len == 1 && resp[4] == SSH_AGENT_SUCCESS {
+        if len == 1 && resp[4] == SSHAgentCommunicator.SSH_AGENT_SUCCESS {
             NSLog("Successfully removed key")
         } else {
             NSLog("Failure removing key from agent")
@@ -111,11 +112,11 @@ class SSHAgentCommunicator {
     func getLoadedKeys() -> [SSHKey]? {
         guard let fd = openSocket() else { return nil }
         defer { Darwin.close(fd) }
-        sendCommand(SSH_AGENTC_REQUEST_IDENTITIES, to: fd)
+        sendCommand(SSHAgentCommunicator.SSH_AGENTC_REQUEST_IDENTITIES, to: fd)
 
         guard let header = recvAll(fd, count: 5) else { return nil }
         let msgLen = UInt32(bigEndian: header.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
-        guard header[4] == SSH_AGENT_IDENTITIES_ANSWER else {
+        guard header[4] == SSHAgentCommunicator.SSH_AGENT_IDENTITIES_ANSWER else {
             NSLog("Failure getting list of keys")
             return nil
         }
