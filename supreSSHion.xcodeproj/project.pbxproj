@@ -18,6 +18,7 @@
 		DEA100003000000000000001 /* KeysWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100003000000000000002 /* KeysWindow.swift */; };
 		DEA100004000000000000001 /* KeyExemption.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100004000000000000002 /* KeyExemption.swift */; };
 		DEA100005000000000000001 /* ExemptionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100005000000000000002 /* ExemptionStore.swift */; };
+		DEA100006000000000000001 /* ExemptionsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100006000000000000002 /* ExemptionsWindow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +36,7 @@
 		DEA100003000000000000002 /* KeysWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeysWindow.swift; sourceTree = "<group>"; };
 		DEA100004000000000000002 /* KeyExemption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyExemption.swift; sourceTree = "<group>"; };
 		DEA100005000000000000002 /* ExemptionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExemptionStore.swift; sourceTree = "<group>"; };
+		DEA100006000000000000002 /* ExemptionsWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExemptionsWindow.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 				DEA100003000000000000002 /* KeysWindow.swift */,
 				DEA100004000000000000002 /* KeyExemption.swift */,
 				DEA100005000000000000002 /* ExemptionStore.swift */,
+				DEA100006000000000000002 /* ExemptionsWindow.swift */,
 				DEA100002000000000000002 /* SSHKey.swift */,
 				DEA100001000000000000002 /* MenuBarManager.swift */,
 				DE3EE3E3207BCE2900536B64 /* SupreSSHionApp.swift */,
@@ -169,6 +172,7 @@
 				DEA100003000000000000001 /* KeysWindow.swift in Sources */,
 				DEA100004000000000000001 /* KeyExemption.swift in Sources */,
 				DEA100005000000000000001 /* ExemptionStore.swift in Sources */,
+				DEA100006000000000000001 /* ExemptionsWindow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
