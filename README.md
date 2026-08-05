@@ -22,6 +22,20 @@ the expiration time of the disable has been reached, the keys will be removed.
 When a sleep event is received, it will reactivate the key removal if the user had disabled the key unloading
 functionality.
 
+### Exempting a key from removal
+
+Sometimes you want one key to stay loaded across a lock — a long-running session to a low-risk host, say — while
+everything else still gets flushed. Open the keys dialog and check **Exempt** next to that key; it will be skipped the
+next time the screen locks or the disable timer expires. Exemptions are tracked by the key's fingerprint, so they
+survive the key being unloaded and reloaded, and they survive quitting and relaunching supreSSHion.
+
+Exemptions do **not** protect a key from a removal you trigger yourself — "Remove All Keys" in the menu and "Remove
+All" in the keys dialog always remove everything, exempted or not. Only the automatic lock/sleep removal honors them.
+
+To manage exemptions for keys that aren't currently loaded (or to remove one), use **Manage Exemptions…** in the menu.
+You can add an exemption directly by pasting a fingerprint (the same `SHA256:…` value `ssh-add -l` prints), and give it
+a label to remember what it's for.
+
 ### What about loading my SSH key?
 
 You can add `AddKeysToAgent yes` to your ssh config. If your key isn't loaded when ssh is invoked, ssh will prompt you
