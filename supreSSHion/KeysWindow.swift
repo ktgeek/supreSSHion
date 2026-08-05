@@ -30,17 +30,6 @@ private struct KeysView: View {
     var body: some View {
         VStack(spacing: 0) {
             Table(supervisor.loadedKeys, selection: $selectedIDs) {
-                TableColumn("") { key in
-                    Toggle("", isOn: Binding(
-                        get: { selectedIDs.contains(key.id) },
-                        set: { checked in
-                            if checked { selectedIDs.insert(key.id) }
-                            else { selectedIDs.remove(key.id) }
-                        }
-                    ))
-                    .toggleStyle(.checkbox)
-                }
-                .width(20)
                 TableColumn("Exempt") { key in
                     Toggle("", isOn: Binding(
                         get: { supervisor.isExempt(key) },
