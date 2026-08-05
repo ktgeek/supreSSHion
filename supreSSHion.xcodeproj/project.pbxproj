@@ -16,6 +16,8 @@
 		DEA100001000000000000001 /* MenuBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100001000000000000002 /* MenuBarManager.swift */; };
 		DEA100002000000000000001 /* SSHKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100002000000000000002 /* SSHKey.swift */; };
 		DEA100003000000000000001 /* KeysWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100003000000000000002 /* KeysWindow.swift */; };
+		DEA100004000000000000001 /* KeyExemption.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100004000000000000002 /* KeyExemption.swift */; };
+		DEA100005000000000000001 /* ExemptionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100005000000000000002 /* ExemptionStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +33,8 @@
 		DEA100001000000000000002 /* MenuBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarManager.swift; sourceTree = "<group>"; };
 		DEA100002000000000000002 /* SSHKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHKey.swift; sourceTree = "<group>"; };
 		DEA100003000000000000002 /* KeysWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeysWindow.swift; sourceTree = "<group>"; };
+		DEA100004000000000000002 /* KeyExemption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyExemption.swift; sourceTree = "<group>"; };
+		DEA100005000000000000002 /* ExemptionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExemptionStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +70,8 @@
 				DE8645B1210962280069C39B /* AboutWindow.swift */,
 				DE3EE3B8207B923900536B64 /* Assets.xcassets */,
 				DEA100003000000000000002 /* KeysWindow.swift */,
+				DEA100004000000000000002 /* KeyExemption.swift */,
+				DEA100005000000000000002 /* ExemptionStore.swift */,
 				DEA100002000000000000002 /* SSHKey.swift */,
 				DEA100001000000000000002 /* MenuBarManager.swift */,
 				DE3EE3E3207BCE2900536B64 /* SupreSSHionApp.swift */,
@@ -161,6 +167,8 @@
 				DE8645B3210962280069C39B /* AboutWindow.swift in Sources */,
 				DEA100002000000000000001 /* SSHKey.swift in Sources */,
 				DEA100003000000000000001 /* KeysWindow.swift in Sources */,
+				DEA100004000000000000001 /* KeyExemption.swift in Sources */,
+				DEA100005000000000000001 /* ExemptionStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
