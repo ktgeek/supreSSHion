@@ -25,7 +25,7 @@ import SwiftUI
 
 private struct KeysView: View {
     let supervisor: AgentSupervisor
-    @State private var selectedIDs: Set<UUID> = []
+    @State private var selectedIDs: Set<String> = []
 
     var body: some View {
         VStack(spacing: 0) {

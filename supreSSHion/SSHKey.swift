@@ -23,7 +23,7 @@
 import Foundation
 
 struct SSHKey: Identifiable {
-    let id = UUID()
+    var id: String { fingerprint }
     let type: String
     let fingerprint: String
     let comment: String
