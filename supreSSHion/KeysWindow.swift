@@ -41,14 +41,29 @@ private struct KeysView: View {
                     .toggleStyle(.checkbox)
                 }
                 .width(20)
-                TableColumn("Type") { Text($0.type) }
-                    .width(min: 60, ideal: 110)
-                TableColumn("Fingerprint") {
-                    Text($0.fingerprint).font(.system(.body, design: .monospaced))
+                TableColumn("Exempt") { key in
+                    Toggle("", isOn: Binding(
+                        get: { supervisor.isExempt(key) },
+                        set: { supervisor.setExempt($0, for: key) }
+                    ))
+                    .toggleStyle(.checkbox)
+                    .help("Keep this key loaded when the screen locks or the Mac sleeps")
+                }
+                .width(52)
+                TableColumn("Type") { key in
+                    Text(key.type).foregroundStyle(supervisor.isExempt(key) ? .secondary : .primary)
+                }
+                .width(min: 60, ideal: 110)
+                TableColumn("Fingerprint") { key in
+                    Text(key.fingerprint)
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundStyle(supervisor.isExempt(key) ? .secondary : .primary)
                 }
                 .width(min: 100, ideal: 360)
-                TableColumn("Comment") { Text($0.comment) }
-                    .width(min: 40)
+                TableColumn("Comment") { key in
+                    Text(key.comment).foregroundStyle(supervisor.isExempt(key) ? .secondary : .primary)
+                }
+                .width(min: 40)
             }
             .frame(minHeight: 160)
 
@@ -69,6 +84,7 @@ private struct KeysView: View {
                     selectedIDs = []
                 }
                 .disabled(supervisor.loadedKeys.isEmpty)
+                .help("Removes every loaded key, including exempted ones")
 
                 Button("Refresh") {
                     supervisor.fetchLoadedKeys()
