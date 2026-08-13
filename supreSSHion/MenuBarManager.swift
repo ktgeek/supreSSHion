@@ -60,10 +60,6 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
         keys.isEnabled = false
         keysItem = keys
 
-        let manageExemptions = menu.addItem(
-            withTitle: "Manage Exemptions…", action: #selector(showExemptionsAction), keyEquivalent: "")
-        manageExemptions.target = self
-
         menu.addItem(.separator())
 
         let resume = menu.addItem(withTitle: "Resume", action: #selector(resumeAction), keyEquivalent: "")
@@ -87,6 +83,10 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         let removeKeys = menu.addItem(withTitle: "Remove All Keys", action: #selector(removeSSHKeysAction), keyEquivalent: "")
         removeKeys.target = self
+
+        let manageExemptions = menu.addItem(
+            withTitle: "Manage Exemptions…", action: #selector(showExemptionsAction), keyEquivalent: "")
+        manageExemptions.target = self
 
         menu.addItem(.separator())
 
