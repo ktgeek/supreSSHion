@@ -36,6 +36,8 @@ To manage exemptions for keys that aren't currently loaded (or to remove one), u
 You can add an exemption directly by pasting a fingerprint (the same `SHA256:…` value `ssh-add -l` prints), and give it
 a label to remember what it's for.
 
+![excemption dialog screenshot](doc/exemption_dialog.png)
+
 ### What about loading my SSH key?
 
 You can add `AddKeysToAgent yes` to your ssh config. If your key isn't loaded when ssh is invoked, ssh will prompt you
