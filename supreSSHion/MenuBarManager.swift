@@ -47,6 +47,14 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
         exemptionsWindow = ExemptionsWindow(supervisor: supervisor)
     }
 
+    // Catches every AppKit-mediated exit - menu Quit, Cmd-Q via the responder
+    // chain when a window is key, AppleScript quit, logout/shutdown - not just
+    // quitAction(). Must stay synchronous: NSApplication.terminate calls exit()
+    // shortly after this returns, so a detached Task would race the process exit.
+    func applicationWillTerminate(_ notification: Notification) {
+        supervisor.removeKeysOnTermination()
+    }
+
     private func buildMenu() -> NSMenu {
         let menu = NSMenu()
         menu.autoenablesItems = false
@@ -95,6 +103,7 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         let quit = menu.addItem(withTitle: "Quit", action: #selector(quitAction), keyEquivalent: "")
         quit.target = self
+        quit.toolTip = "Quitting removes loaded keys (exemptions are kept)"
 
         return menu
     }
