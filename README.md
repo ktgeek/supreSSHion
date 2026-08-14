@@ -22,6 +22,18 @@ the expiration time of the disable has been reached, the keys will be removed.
 When a sleep event is received, it will reactivate the key removal if the user had disabled the key unloading
 functionality.
 
+### Key removal on quit
+
+Quitting supreSSHion also removes all loaded keys (exempted keys are kept — see below), even if key removal is
+currently disabled. Otherwise, disabling removal and then quitting would be an easy way to leave keys loaded
+indefinitely, defeating the whole point of the app. This applies to quitting from the menu, ⌘Q, and to terminating
+the app from a terminal (`killall supreSSHion`, Ctrl-C).
+
+This can't cover every way a process can end: Force Quit, `kill -9`, and a crash all bypass normal termination
+handling, and no app running in userspace can intercept them. If that matters for your threat model, pair
+supreSSHion with a short key lifetime — `ssh-add -t <lifetime>` — so keys expire on their own regardless of how
+the agent or supreSSHion goes away.
+
 ### Exempting a key from removal
 
 Sometimes you want one key to stay loaded across a lock — a long-running session to a low-risk host, say — while
