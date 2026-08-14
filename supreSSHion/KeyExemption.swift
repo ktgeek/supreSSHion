@@ -22,10 +22,8 @@
 
 import Foundation
 
-struct SSHKey: Identifiable {
+struct KeyExemption: Codable, Identifiable, Hashable {
+    var fingerprint: String
+    var label: String
     var id: String { fingerprint }
-    let type: String
-    let fingerprint: String
-    let comment: String
-    let keyBlob: Data
 }

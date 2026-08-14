@@ -27,14 +27,17 @@ import Observation
 @Observable
 class AgentSupervisor : NSObject {
     var supressionState: SupresshionState
+    let exemptions: ExemptionStore
     var disableTimer: Timer?
     var screenIsLocked = false
     var keysLoadedMessage: String = ""
     var loadedKeysCount: Int = 0
+    var exemptLoadedKeysCount: Int = 0
     var loadedKeys: [SSHKey] = []
 
-    init(state:SupresshionState) {
+    init(state: SupresshionState, exemptions: ExemptionStore = ExemptionStore()) {
         supressionState = state
+        self.exemptions = exemptions
         super.init()
 
         // I have searched both the net and apple docs, and can't find
@@ -60,7 +63,7 @@ class AgentSupervisor : NSObject {
     @objc func screenLockedReceived() {
         screenIsLocked = true
         if !supressionState.isDisabled {
-            removeKeysNow()
+            removeUnexemptedKeys()
         }
     }
 
@@ -78,9 +81,26 @@ class AgentSupervisor : NSObject {
         timerEarlyExit()
     }
 
+    // A true wipe: every user-initiated removal (menu item, "Remove All" button)
+    // ignores exemptions. Only automatic lock/timer removal spares exempted keys;
+    // see removeUnexemptedKeys().
     func removeKeysNow() {
         let sshAgentCommicator = SSHAgentCommunicator()
         sshAgentCommicator.removeKeys()
+        refreshKeysCount()
+    }
+
+    func removeUnexemptedKeys() {
+        let communicator = SSHAgentCommunicator()
+        let keys = communicator.getLoadedKeys() ?? []
+        let toRemove = keys.filter { !exemptions.isExempt(fingerprint: $0.fingerprint) }
+
+        if toRemove.count == keys.count {
+            communicator.removeKeys()
+        } else {
+            for key in toRemove { communicator.removeKey(blob: key.keyBlob) }
+            NSLog("Kept \(keys.count - toRemove.count) exempted key(s) loaded")
+        }
         refreshKeysCount()
     }
 
@@ -109,7 +129,7 @@ class AgentSupervisor : NSObject {
         disableTimer = nil
         if screenIsLocked {
             NSLog("Removing keys because the screen is locked and the disable timer expired")
-            removeKeysNow()
+            removeUnexemptedKeys()
         }
         else {
             NSLog("Not removing keys because the screen is unlocked")
@@ -125,9 +145,11 @@ class AgentSupervisor : NSObject {
         let communicator = SSHAgentCommunicator()
         let rawKeys = (communicator.getLoadedKeys()) ?? []
         loadedKeysCount = rawKeys.count
+        exemptLoadedKeysCount = rawKeys.filter { exemptions.isExempt(fingerprint: $0.fingerprint) }.count
         let implyDialog = loadedKeysCount == 0 ? "" : "…"
         let plural = loadedKeysCount == 1 ? "" : "s"
-        keysLoadedMessage = "\(loadedKeysCount) key\(plural) loaded\(implyDialog)"
+        let exemptClause = exemptLoadedKeysCount == 0 ? "" : " (\(exemptLoadedKeysCount) exempt)"
+        keysLoadedMessage = "\(loadedKeysCount) key\(plural) loaded\(exemptClause)\(implyDialog)"
     }
 
     func fetchLoadedKeys() {
@@ -140,6 +162,19 @@ class AgentSupervisor : NSObject {
         for key in keys { communicator.removeKey(blob: key.keyBlob) }
         refreshKeysCount()
         fetchLoadedKeys()
+    }
+
+    func isExempt(_ key: SSHKey) -> Bool {
+        exemptions.isExempt(fingerprint: key.fingerprint)
+    }
+
+    func setExempt(_ exempt: Bool, for key: SSHKey) {
+        if exempt {
+            exemptions.exempt(fingerprint: key.fingerprint, label: key.comment)
+        } else {
+            exemptions.unexempt(fingerprint: key.fingerprint)
+        }
+        refreshKeysCount()
     }
 
     deinit {

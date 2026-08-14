@@ -27,6 +27,7 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let supervisor = AgentSupervisor(state: SupresshionState())
     private var aboutWindow: AboutWindow!
     private var keysWindow: KeysWindow!
+    private var exemptionsWindow: ExemptionsWindow!
 
     private weak var stateItem: NSMenuItem?
     private weak var keysItem: NSMenuItem?
@@ -43,6 +44,7 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         aboutWindow = AboutWindow()
         keysWindow = KeysWindow(supervisor: supervisor)
+        exemptionsWindow = ExemptionsWindow(supervisor: supervisor)
     }
 
     private func buildMenu() -> NSMenu {
@@ -82,6 +84,10 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
         let removeKeys = menu.addItem(withTitle: "Remove All Keys", action: #selector(removeSSHKeysAction), keyEquivalent: "")
         removeKeys.target = self
 
+        let manageExemptions = menu.addItem(
+            withTitle: "Manage Exemptions…", action: #selector(showExemptionsAction), keyEquivalent: "")
+        manageExemptions.target = self
+
         menu.addItem(.separator())
 
         let about = menu.addItem(withTitle: "About supreSSHion", action: #selector(aboutAction), keyEquivalent: "")
@@ -109,6 +115,7 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
         supervisor.fetchLoadedKeys()
         keysWindow.showWindow(nil)
     }
+    @objc private func showExemptionsAction() { exemptionsWindow.showWindow(nil) }
     @objc private func aboutAction() { aboutWindow.showWindow(nil) }
     @objc private func quitAction() { NSApplication.shared.terminate(self) }
 }
