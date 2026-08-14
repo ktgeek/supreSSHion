@@ -55,6 +55,16 @@ The project is pure Swift — no Objective-C, no bridging header. There is no `A
 Always enter plan mode before making any file changes — including source code, configuration, and documentation. Present
 the plan and get approval before implementing.
 
+### Commits
+
+Every commit an AI agent authors or co-authors must end with the co-author trailer, matching the rest of the
+history:
+
+    Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+Use the model actually doing the work in the trailer name. Add it when the commit is created — don't leave it
+for a later rewrite.
+
 ## Maintenance
 
 Keep this file up-to-date as the project evolves. When making changes that affect project structure, commands, or
