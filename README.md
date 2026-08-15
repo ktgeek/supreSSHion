@@ -57,6 +57,10 @@ for your key. (You may also want to specify your key using `IdentityFile /path/t
 
 This approach works well for most terminal-based SSH usage, though it may not cover every tool that invokes SSH internally.
 
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release history.
+
 ## License
 
 supreSSHion is distributed under the [MIT License](LICENSE), and freely available for inclusion in other projects.

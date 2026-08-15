@@ -65,6 +65,24 @@ history:
 Use the model actually doing the work in the trailer name. Add it when the commit is created — don't leave it
 for a later rewrite.
 
+## Releases
+
+Version lives in two places, both in `supreSSHion.xcodeproj/project.pbxproj`, each duplicated across
+the Debug and Release build configs of the app target:
+
+- `MARKETING_VERSION` — the user-visible version (e.g. `3.0`). Convention is `MAJOR.MINOR`; add a
+  patch component only when a patch release is actually needed.
+- `CURRENT_PROJECT_VERSION` — the build number, a plain incrementing integer.
+
+`supreSSHion/Info.plist` derives `CFBundleShortVersionString` and `CFBundleVersion` from those two
+settings via `$(MARKETING_VERSION)` / `$(CURRENT_PROJECT_VERSION)`, and `AboutWindow.swift` reads
+`CFBundleShortVersionString` from the bundle at runtime — don't hardcode a version anywhere else.
+
+Every user-facing change gets an entry in `CHANGELOG.md` (Keep a Changelog format) in the same
+commit/session as the change, under an `## [Unreleased]` or upcoming-version heading. When cutting a
+release: bump both version settings, finalize the `CHANGELOG.md` heading with the release date, and
+tag the release commit `vMAJOR.MINOR` (lightweight tag, e.g. `v3.0`).
+
 ## Maintenance
 
 Keep this file up-to-date as the project evolves. When making changes that affect project structure, commands, or
