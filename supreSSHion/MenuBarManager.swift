@@ -33,6 +33,10 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private weak var keysItem: NSMenuItem?
     private weak var resumeItem: NSMenuItem?
 
+    // Keeps the DispatchSourceSignal instances alive; a source with no other
+    // reference gets deallocated and stops firing.
+    private var signalSources: [DispatchSourceSignal] = []
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         let icon = NSImage(named: "statusIcon")
         icon?.isTemplate = true
@@ -45,6 +49,31 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
         aboutWindow = AboutWindow()
         keysWindow = KeysWindow(supervisor: supervisor)
         exemptionsWindow = ExemptionsWindow(supervisor: supervisor)
+
+        installTerminationSignalHandlers()
+    }
+
+    // `killall supreSSHion` (SIGTERM) and Ctrl-C on a terminal-launched
+    // instance (SIGINT/SIGHUP) otherwise terminate the process without ever
+    // reaching applicationWillTerminate, leaving keys loaded. Routing these
+    // through NSApplication.terminate keeps key removal on the single path
+    // in applicationWillTerminate rather than duplicating it here.
+    private func installTerminationSignalHandlers() {
+        for sig in [SIGTERM, SIGINT, SIGHUP] {
+            signal(sig, SIG_IGN) // default disposition would kill us before the source fires
+            let source = DispatchSource.makeSignalSource(signal: sig, queue: .main)
+            source.setEventHandler { NSApplication.shared.terminate(nil) }
+            source.resume()
+            signalSources.append(source)
+        }
+    }
+
+    // Catches every AppKit-mediated exit - menu Quit, Cmd-Q via the responder
+    // chain when a window is key, AppleScript quit, logout/shutdown - not just
+    // quitAction(). Must stay synchronous: NSApplication.terminate calls exit()
+    // shortly after this returns, so a detached Task would race the process exit.
+    func applicationWillTerminate(_ notification: Notification) {
+        supervisor.removeKeysOnTermination()
     }
 
     private func buildMenu() -> NSMenu {
@@ -95,6 +124,7 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
         let quit = menu.addItem(withTitle: "Quit", action: #selector(quitAction), keyEquivalent: "")
         quit.target = self
+        quit.toolTip = "Quitting removes loaded keys (exemptions are kept)"
 
         return menu
     }

@@ -31,7 +31,10 @@ class SSHAgentCommunicator {
     private static let SSH_AGENTC_REMOVE_IDENTITY: UInt8 = 0x12
     private static let SSH_AGENTC_REMOVE_ALL_IDENTITIES: UInt8 = 0x13
 
-    
+    // A wedged ssh-agent must not be able to hang callers indefinitely -
+    // notably the app-termination path, which runs under a limited budget.
+    private static let socketTimeout = timeval(tv_sec: 2, tv_usec: 0)
+
     private let socketPath: String
 
     init() {
@@ -59,6 +62,11 @@ class SSHAgentCommunicator {
             }
         }
         guard rc == 0 else { Darwin.close(fd); return nil }
+
+        var timeout = SSHAgentCommunicator.socketTimeout
+        setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, socklen_t(MemoryLayout<timeval>.size))
+        setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, socklen_t(MemoryLayout<timeval>.size))
+
         return fd
     }
 

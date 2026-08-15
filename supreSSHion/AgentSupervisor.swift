@@ -90,6 +90,15 @@ class AgentSupervisor : NSObject {
         refreshKeysCount()
     }
 
+    // Quitting is an easy way to strand keys in the agent past a lock, so this
+    // runs even while removal is disabled - unlike the lock handler, which checks
+    // isDisabled. Exemptions are still honored, matching the automatic path.
+    func removeKeysOnTermination() {
+        NSLog("Removing keys because supreSSHion is quitting")
+        timerEarlyExit()
+        removeUnexemptedKeys()
+    }
+
     func removeUnexemptedKeys() {
         let communicator = SSHAgentCommunicator()
         let keys = communicator.getLoadedKeys() ?? []
