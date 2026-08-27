@@ -115,30 +115,43 @@ class AgentSupervisor : NSObject {
     @discardableResult
     func removeUnexemptedKeys() -> Result<Void, AgentError> {
         let communicator = SSHAgentCommunicator()
-        let listResult = communicator.getLoadedKeys()
-        let keys = (try? listResult.get()) ?? []
-        let toRemove = keys.filter { !exemptions.isExempt(fingerprint: $0.fingerprint) }
+        switch communicator.getLoadedKeys() {
+        case .failure(let error):
+            // Can't tell which keys are loaded, so can't selectively spare
+            // exempted ones. Removing everything is the conservative choice
+            // - leaving keys behind because the list failed would be worse
+            // than losing an exemption for this one removal - but the
+            // failure itself must still be visible to the caller, not
+            // silently swallowed by treating it the same as "no keys."
+            NSLog("Failed to list loaded keys before automatic removal (\(error.localizedDescription)); removing all keys")
+            let removalResult = communicator.removeKeys()
+            refreshKeysCount()
+            if case .failure(let removalError) = removalResult { return .failure(removalError) }
+            return .failure(error)
 
-        let removalResult: Result<Void, AgentError>
-        if toRemove.count == keys.count {
-            removalResult = communicator.removeKeys()
-        } else {
-            var lastFailure: AgentError?
-            for key in toRemove {
-                if case .failure(let error) = communicator.removeKey(blob: key.keyBlob) {
-                    lastFailure = error
-                }
+        case .success(let keys):
+            guard !keys.isEmpty else {
+                refreshKeysCount()
+                return .success(())
             }
-            NSLog("Kept \(keys.count - toRemove.count) exempted key(s) loaded")
-            removalResult = lastFailure.map { .failure($0) } ?? .success(())
-        }
-        refreshKeysCount()
 
-        // A failed list fetch is reported even though, until the exempted-
-        // keys handling is revisited, it's still treated the same as an
-        // empty key list for the removal itself.
-        if case .failure(let error) = listResult { return .failure(error) }
-        return removalResult
+            let toRemove = keys.filter { !exemptions.isExempt(fingerprint: $0.fingerprint) }
+            let removalResult: Result<Void, AgentError>
+            if toRemove.count == keys.count {
+                removalResult = communicator.removeKeys()
+            } else {
+                var lastFailure: AgentError?
+                for key in toRemove {
+                    if case .failure(let error) = communicator.removeKey(blob: key.keyBlob) {
+                        lastFailure = error
+                    }
+                }
+                NSLog("Kept \(keys.count - toRemove.count) exempted key(s) loaded")
+                removalResult = lastFailure.map { .failure($0) } ?? .success(())
+            }
+            refreshKeysCount()
+            return removalResult
+        }
     }
 
     func resume() {
