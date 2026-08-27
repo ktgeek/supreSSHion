@@ -24,6 +24,7 @@
 		5CE570000000000000000106 /* SupresshionStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000105 /* SupresshionStateTests.swift */; };
 		5CE570000000000000000108 /* FakeSSHAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000107 /* FakeSSHAgent.swift */; };
 		5CE57000000000000000010A /* SSHAgentCommunicatorParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000109 /* SSHAgentCommunicatorParserTests.swift */; };
+		5CE570000000000000000202 /* AgentError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000201 /* AgentError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,7 @@
 		5CE570000000000000000105 /* SupresshionStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupresshionStateTests.swift; sourceTree = "<group>"; };
 		5CE570000000000000000107 /* FakeSSHAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeSSHAgent.swift; sourceTree = "<group>"; };
 		5CE570000000000000000109 /* SSHAgentCommunicatorParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHAgentCommunicatorParserTests.swift; sourceTree = "<group>"; };
+		5CE570000000000000000201 /* AgentError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +112,7 @@
 				DE3EE3E3207BCE2900536B64 /* SupreSSHionApp.swift */,
 				DE973DDA207C1E13002DEDC5 /* SupresshionState.swift */,
 				DE3EE3E8207BE44900536B64 /* AgentSupervisor.swift */,
+				5CE570000000000000000201 /* AgentError.swift */,
 				AA000001000000000000001 /* SSHAgentCommunicator.swift */,
 				DE3EE3BD207B923900536B64 /* Info.plist */,
 				DE3EE3C0207B923900536B64 /* supreSSHion.entitlements */,
@@ -245,6 +248,7 @@
 				DEA100004000000000000001 /* KeyExemption.swift in Sources */,
 				DEA100005000000000000001 /* ExemptionStore.swift in Sources */,
 				DEA100006000000000000001 /* ExemptionsWindow.swift in Sources */,
+				5CE570000000000000000202 /* AgentError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

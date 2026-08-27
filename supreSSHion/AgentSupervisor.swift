@@ -101,7 +101,7 @@ class AgentSupervisor : NSObject {
 
     func removeUnexemptedKeys() {
         let communicator = SSHAgentCommunicator()
-        let keys = communicator.getLoadedKeys() ?? []
+        let keys = (try? communicator.getLoadedKeys().get()) ?? []
         let toRemove = keys.filter { !exemptions.isExempt(fingerprint: $0.fingerprint) }
 
         if toRemove.count == keys.count {
@@ -152,7 +152,7 @@ class AgentSupervisor : NSObject {
 
     func refreshKeysCount() {
         let communicator = SSHAgentCommunicator()
-        let rawKeys = (communicator.getLoadedKeys()) ?? []
+        let rawKeys = (try? communicator.getLoadedKeys().get()) ?? []
         loadedKeysCount = rawKeys.count
         exemptLoadedKeysCount = rawKeys.filter { exemptions.isExempt(fingerprint: $0.fingerprint) }.count
         let implyDialog = loadedKeysCount == 0 ? "" : "…"
@@ -163,7 +163,7 @@ class AgentSupervisor : NSObject {
 
     func fetchLoadedKeys() {
         let communicator = SSHAgentCommunicator()
-        loadedKeys = communicator.getLoadedKeys() ?? []
+        loadedKeys = (try? communicator.getLoadedKeys().get()) ?? []
     }
 
     func removeSelectedKeys(_ keys: [SSHKey]) {
