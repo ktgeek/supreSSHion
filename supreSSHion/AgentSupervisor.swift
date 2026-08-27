@@ -106,14 +106,18 @@ class AgentSupervisor : NSObject {
         NSLog("Removing keys because supreSSHion is quitting")
         timerEarlyExit()
         // There's no time budget left here to show a notification - see
-        // NotificationPresenter.recordTerminationFailure().
-        if case .failure = removeUnexemptedKeys() {
+        // NotificationPresenter.recordTerminationFailure(). Skips the
+        // post-removal refresh too (refreshAfter: false): the app is about
+        // to exit, so that's a REQUEST_IDENTITIES round trip spent updating
+        // UI state nothing will see, on the one path where every
+        // millisecond of the termination time budget matters.
+        if case .failure = removeUnexemptedKeys(refreshAfter: false) {
             NotificationPresenter.recordTerminationFailure()
         }
     }
 
     @discardableResult
-    func removeUnexemptedKeys() -> Result<Void, AgentError> {
+    func removeUnexemptedKeys(refreshAfter: Bool = true) -> Result<Void, AgentError> {
         let communicator = SSHAgentCommunicator()
         switch communicator.getLoadedKeys() {
         case .failure(let error):
@@ -125,13 +129,13 @@ class AgentSupervisor : NSObject {
             // silently swallowed by treating it the same as "no keys."
             NSLog("Failed to list loaded keys before automatic removal (\(error.localizedDescription)); removing all keys")
             let removalResult = communicator.removeKeys()
-            refreshKeysCount()
+            if refreshAfter { refreshKeysCount() }
             if case .failure(let removalError) = removalResult { return .failure(removalError) }
             return .failure(error)
 
         case .success(let keys):
             guard !keys.isEmpty else {
-                refreshKeysCount()
+                if refreshAfter { refreshKeysCount() }
                 return .success(())
             }
 
@@ -143,7 +147,7 @@ class AgentSupervisor : NSObject {
                 removalResult = communicator.removeKeys(blobs: toRemove.map { $0.keyBlob })
                 NSLog("Kept \(keys.count - toRemove.count) exempted key(s) loaded")
             }
-            refreshKeysCount()
+            if refreshAfter { refreshKeysCount() }
             return removalResult
         }
     }
