@@ -24,7 +24,7 @@ import Cocoa
 import SwiftUI
 
 private struct AboutView: View {
-    let version = Bundle.main.infoDictionary!["CFBundleShortVersionString"] as! String
+    let version = (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "unknown"
     let projectURL = URL(string: "https://github.com/ktgeek/supreSSHion")!
 
     var body: some View {

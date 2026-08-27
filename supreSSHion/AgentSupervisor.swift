@@ -26,7 +26,7 @@ import Observation
 
 @Observable
 class AgentSupervisor : NSObject {
-    var suppressionState: SupresshionState
+    let suppressionState: SupresshionState
     let exemptions: ExemptionStore
     var disableTimer: Timer?
     var screenIsLocked = false

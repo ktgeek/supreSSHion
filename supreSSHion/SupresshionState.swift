@@ -1,4 +1,4 @@
-//// MIT License
+// MIT License
 //
 // Copyright (c) 2018-2026 Keith Garner
 //
@@ -25,35 +25,30 @@ import Observation
 
 @Observable
 class SupresshionState {
+    private static let timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return formatter
+    }()
 
     private var infinitelyDisabled = false
     private var disabledUntil: Date?
 
     var isDisabled: Bool {
-        get {
-            if infinitelyDisabled {
-                return true
-            }
-
-            return disabledUntil != nil ? (disabledUntil! > Date()) : false
-        }
+        if infinitelyDisabled { return true }
+        guard let disabledUntil else { return false }
+        return disabledUntil > Date()
     }
 
     var statusMessage: String {
-        get {
-            if !isDisabled {
-                return "Active"
-            }
-
-            if infinitelyDisabled {
-                return "Disabled"
-            }
-
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .none
-            dateFormatter.timeStyle = .short
-            return "Disabled until \(dateFormatter.string(from: disabledUntil!))"
-        }
+        guard isDisabled else { return "Active" }
+        guard !infinitelyDisabled else { return "Disabled" }
+        // isDisabled being true and infinitelyDisabled being false means
+        // disabledUntil must be a non-nil future date; this fallback is
+        // unreachable in practice but avoids force-unwrapping it.
+        guard let disabledUntil else { return "Disabled" }
+        return "Disabled until \(SupresshionState.timeFormatter.string(from: disabledUntil))"
     }
 
     func disable() {
@@ -61,7 +56,7 @@ class SupresshionState {
         disabledUntil = nil
     }
 
-    func disable(until:Date) {
+    func disable(until: Date) {
         disabledUntil = until
         infinitelyDisabled = false
     }
