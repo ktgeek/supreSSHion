@@ -213,10 +213,18 @@ class SSHAgentCommunicator {
             // blobs are `string algorithm-name` followed by algorithm-specific
             // data, not a separate wire field. Parsing it through its own
             // cursor keeps a bogus embedded length from reading past this
-            // blob's own bounds into whatever follows in payload.
+            // blob's own bounds into whatever follows in payload; a length
+            // that doesn't fit is the same kind of malformed input as a
+            // truncated blob or comment above, so it's treated the same way.
             var blobCursor = PayloadCursor(blob)
-            let keyType = blobCursor.readLengthPrefixedBytes()
-                .flatMap { String(bytes: $0, encoding: .utf8) } ?? ""
+            guard let typeBytes = blobCursor.readLengthPrefixedBytes() else {
+                NSLog("Malformed identities response from agent (invalid key type length)")
+                return nil
+            }
+            // A non-UTF8 type string is tolerated as empty for now - decode
+            // failures are a separate, lower-severity concern from bounds
+            // safety.
+            let keyType = String(bytes: typeBytes, encoding: .utf8) ?? ""
             let commentString = String(bytes: comment, encoding: .utf8) ?? ""
 
             keys.append(SSHKey(type: keyType, fingerprint: fingerprint, comment: commentString, keyBlob: Data(blob)))
