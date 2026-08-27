@@ -105,7 +105,10 @@ final class FakeSSHAgent {
 enum FakeAgentResponse {
     static let identitiesAnswerType: UInt8 = 0x0c
 
-    private static func bigEndianBytes(_ value: UInt32) -> Data {
+    /// Exposed (not private) so tests can build deliberately-wrong length
+    /// fields directly, rather than only well-formed ones via
+    /// lengthPrefixed(_:).
+    static func bigEndianBytes(_ value: UInt32) -> Data {
         withUnsafeBytes(of: value.bigEndian) { Data($0) }
     }
 

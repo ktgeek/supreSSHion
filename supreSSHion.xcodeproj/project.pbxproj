@@ -23,6 +23,7 @@
 		5CE570000000000000000104 /* ExemptionStorePersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000103 /* ExemptionStorePersistenceTests.swift */; };
 		5CE570000000000000000106 /* SupresshionStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000105 /* SupresshionStateTests.swift */; };
 		5CE570000000000000000108 /* FakeSSHAgent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000107 /* FakeSSHAgent.swift */; };
+		5CE57000000000000000010A /* SSHAgentCommunicatorParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000109 /* SSHAgentCommunicatorParserTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		5CE570000000000000000103 /* ExemptionStorePersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExemptionStorePersistenceTests.swift; sourceTree = "<group>"; };
 		5CE570000000000000000105 /* SupresshionStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupresshionStateTests.swift; sourceTree = "<group>"; };
 		5CE570000000000000000107 /* FakeSSHAgent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeSSHAgent.swift; sourceTree = "<group>"; };
+		5CE570000000000000000109 /* SSHAgentCommunicatorParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHAgentCommunicatorParserTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +124,7 @@
 				5CE570000000000000000103 /* ExemptionStorePersistenceTests.swift */,
 				5CE570000000000000000105 /* SupresshionStateTests.swift */,
 				5CE570000000000000000107 /* FakeSSHAgent.swift */,
+				5CE570000000000000000109 /* SSHAgentCommunicatorParserTests.swift */,
 			);
 			path = supreSSHionTests;
 			sourceTree = "<group>";
@@ -253,6 +256,7 @@
 				5CE570000000000000000104 /* ExemptionStorePersistenceTests.swift in Sources */,
 				5CE570000000000000000106 /* SupresshionStateTests.swift in Sources */,
 				5CE570000000000000000108 /* FakeSSHAgent.swift in Sources */,
+				5CE57000000000000000010A /* SSHAgentCommunicatorParserTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
