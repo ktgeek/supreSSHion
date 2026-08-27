@@ -21,6 +21,7 @@
 		DEA100006000000000000001 /* ExemptionsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100006000000000000002 /* ExemptionsWindow.swift */; };
 		5CE570000000000000000102 /* ExemptionStoreNormalizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000101 /* ExemptionStoreNormalizeTests.swift */; };
 		5CE570000000000000000104 /* ExemptionStorePersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000103 /* ExemptionStorePersistenceTests.swift */; };
+		5CE570000000000000000106 /* SupresshionStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000105 /* SupresshionStateTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,7 @@
 		5CE570000000000000000001 /* supreSSHionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = supreSSHionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5CE570000000000000000101 /* ExemptionStoreNormalizeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExemptionStoreNormalizeTests.swift; sourceTree = "<group>"; };
 		5CE570000000000000000103 /* ExemptionStorePersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExemptionStorePersistenceTests.swift; sourceTree = "<group>"; };
+		5CE570000000000000000105 /* SupresshionStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupresshionStateTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +118,7 @@
 			children = (
 				5CE570000000000000000101 /* ExemptionStoreNormalizeTests.swift */,
 				5CE570000000000000000103 /* ExemptionStorePersistenceTests.swift */,
+				5CE570000000000000000105 /* SupresshionStateTests.swift */,
 			);
 			path = supreSSHionTests;
 			sourceTree = "<group>";
@@ -245,6 +248,7 @@
 			files = (
 				5CE570000000000000000102 /* ExemptionStoreNormalizeTests.swift in Sources */,
 				5CE570000000000000000104 /* ExemptionStorePersistenceTests.swift in Sources */,
+				5CE570000000000000000106 /* SupresshionStateTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
