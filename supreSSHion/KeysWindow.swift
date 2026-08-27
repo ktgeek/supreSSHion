@@ -68,15 +68,15 @@ private struct KeysView: View {
                 .disabled(selectedIDs.isEmpty)
 
                 Button("Remove All") {
+                    // removeKeysNow() already calls refresh() internally.
                     supervisor.removeKeysNow()
-                    supervisor.fetchLoadedKeys()
                     selectedIDs = []
                 }
                 .disabled(supervisor.loadedKeys.isEmpty)
                 .help("Removes every loaded key, including exempted ones")
 
                 Button("Refresh") {
-                    supervisor.fetchLoadedKeys()
+                    supervisor.refresh()
                 }
             }
             .padding(8)
@@ -102,7 +102,7 @@ class KeysWindow: NSWindowController, NSWindowDelegate {
     required init?(coder: NSCoder) { fatalError("init(coder:) not supported") }
 
     override func showWindow(_ sender: Any?) {
-        supervisor.fetchLoadedKeys()
+        supervisor.refresh()
         if !(window?.isVisible ?? false) {
             window?.setContentSize(NSSize(width: 760, height: 250))
             window?.center()
