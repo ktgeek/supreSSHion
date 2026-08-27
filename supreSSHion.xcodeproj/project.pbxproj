@@ -19,7 +19,20 @@
 		DEA100004000000000000001 /* KeyExemption.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100004000000000000002 /* KeyExemption.swift */; };
 		DEA100005000000000000001 /* ExemptionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100005000000000000002 /* ExemptionStore.swift */; };
 		DEA100006000000000000001 /* ExemptionsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA100006000000000000002 /* ExemptionsWindow.swift */; };
+		5CE570000000000000000102 /* ExemptionStoreNormalizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000101 /* ExemptionStoreNormalizeTests.swift */; };
+		5CE570000000000000000104 /* ExemptionStorePersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000103 /* ExemptionStorePersistenceTests.swift */; };
+		5CE570000000000000000106 /* SupresshionStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000105 /* SupresshionStateTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5CE570000000000000000005 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DE3EE3AA207B923900536B64 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DE3EE3B1207B923900536B64;
+			remoteInfo = supreSSHion;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		AA000001000000000000001 /* SSHAgentCommunicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHAgentCommunicator.swift; sourceTree = "<group>"; };
@@ -37,10 +50,21 @@
 		DEA100004000000000000002 /* KeyExemption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyExemption.swift; sourceTree = "<group>"; };
 		DEA100005000000000000002 /* ExemptionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExemptionStore.swift; sourceTree = "<group>"; };
 		DEA100006000000000000002 /* ExemptionsWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExemptionsWindow.swift; sourceTree = "<group>"; };
+		5CE570000000000000000001 /* supreSSHionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = supreSSHionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5CE570000000000000000101 /* ExemptionStoreNormalizeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExemptionStoreNormalizeTests.swift; sourceTree = "<group>"; };
+		5CE570000000000000000103 /* ExemptionStorePersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExemptionStorePersistenceTests.swift; sourceTree = "<group>"; };
+		5CE570000000000000000105 /* SupresshionStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupresshionStateTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		DE3EE3AF207B923900536B64 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5CE570000000000000000004 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -54,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				DE3EE3B4207B923900536B64 /* supreSSHion */,
+				5CE57000000000000000000B /* supreSSHionTests */,
 				DE3EE3B3207B923900536B64 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -62,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				DE3EE3B2207B923900536B64 /* supreSSHion.app */,
+				5CE570000000000000000001 /* supreSSHionTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -87,6 +113,16 @@
 			path = supreSSHion;
 			sourceTree = "<group>";
 		};
+		5CE57000000000000000000B /* supreSSHionTests */ = {
+			isa = PBXGroup;
+			children = (
+				5CE570000000000000000101 /* ExemptionStoreNormalizeTests.swift */,
+				5CE570000000000000000103 /* ExemptionStorePersistenceTests.swift */,
+				5CE570000000000000000105 /* SupresshionStateTests.swift */,
+			);
+			path = supreSSHionTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -107,6 +143,24 @@
 			productReference = DE3EE3B2207B923900536B64 /* supreSSHion.app */;
 			productType = "com.apple.product-type.application";
 		};
+		5CE570000000000000000002 /* supreSSHionTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5CE570000000000000000009 /* Build configuration list for PBXNativeTarget "supreSSHionTests" */;
+			buildPhases = (
+				5CE570000000000000000003 /* Sources */,
+				5CE570000000000000000004 /* Frameworks */,
+				5CE57000000000000000000A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5CE570000000000000000006 /* PBXTargetDependency */,
+			);
+			name = supreSSHionTests;
+			productName = supreSSHionTests;
+			productReference = 5CE570000000000000000001 /* supreSSHionTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -126,6 +180,10 @@
 							};
 						};
 					};
+					5CE570000000000000000002 = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = DE3EE3B1207B923900536B64;
+					};
 				};
 			};
 			buildConfigurationList = DE3EE3AD207B923900536B64 /* Build configuration list for PBXProject "supreSSHion" */;
@@ -142,6 +200,7 @@
 			projectRoot = "";
 			targets = (
 				DE3EE3B1207B923900536B64 /* supreSSHion */,
+				5CE570000000000000000002 /* supreSSHionTests */,
 			);
 		};
 /* End PBXProject section */
@@ -152,6 +211,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				DE3EE3B9207B923900536B64 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5CE57000000000000000000A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,7 +242,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5CE570000000000000000003 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5CE570000000000000000102 /* ExemptionStoreNormalizeTests.swift in Sources */,
+				5CE570000000000000000104 /* ExemptionStorePersistenceTests.swift in Sources */,
+				5CE570000000000000000106 /* SupresshionStateTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5CE570000000000000000006 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DE3EE3B1207B923900536B64 /* supreSSHion */;
+			targetProxy = 5CE570000000000000000005 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		DE3EE3D7207B923A00536B64 /* Debug */ = {
@@ -356,6 +440,51 @@
 			};
 			name = Release;
 		};
+		5CE570000000000000000007 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MARKETING_VERSION = 3.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kgarner.supreSSHionTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/supreSSHion.app/Contents/MacOS/supreSSHion";
+			};
+			name = Debug;
+		};
+		5CE570000000000000000008 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MARKETING_VERSION = 3.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kgarner.supreSSHionTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/supreSSHion.app/Contents/MacOS/supreSSHion";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -373,6 +502,15 @@
 			buildConfigurations = (
 				DE3EE3DA207B923A00536B64 /* Debug */,
 				DE3EE3DB207B923A00536B64 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5CE570000000000000000009 /* Build configuration list for PBXNativeTarget "supreSSHionTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5CE570000000000000000007 /* Debug */,
+				5CE570000000000000000008 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
