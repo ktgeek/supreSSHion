@@ -24,6 +24,46 @@ import CryptoKit
 import Darwin
 import Foundation
 
+// A bounds-checked reader over a Data buffer of unknown (agent-controlled)
+// structure. Every read returns nil instead of trapping when the buffer
+// doesn't hold enough bytes, so a malformed or hostile ssh-agent response
+// can only fail parsing - it can never crash the process. Tracks offsets
+// relative to the buffer's own startIndex/endIndex rather than assuming a
+// 0-based Data, since a sub-slice (e.g. a single key's blob, parsed again
+// for its embedded type string) keeps its parent's indices.
+private struct PayloadCursor {
+    private let data: Data
+    private var offset: Int
+
+    init(_ data: Data) {
+        self.data = data
+        self.offset = data.startIndex
+    }
+
+    private var remaining: Int { data.endIndex - offset }
+
+    mutating func readUInt32() -> UInt32? {
+        guard remaining >= 4 else { return nil }
+        let value = UInt32(bigEndian: data[offset..<offset + 4].withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
+        offset += 4
+        return value
+    }
+
+    mutating func readBytes(_ count: Int) -> Data? {
+        guard count >= 0, remaining >= count else { return nil }
+        let slice = data[offset..<offset + count]
+        offset += count
+        return slice
+    }
+
+    // SSH agent wire format's recurring `string` type: a 4-byte big-endian
+    // length followed by that many bytes.
+    mutating func readLengthPrefixedBytes() -> Data? {
+        guard let length = readUInt32() else { return nil }
+        return readBytes(Int(length))
+    }
+}
+
 class SSHAgentCommunicator {
     private static let SSH_AGENT_SUCCESS: UInt8 = 0x06
     private static let SSH_AGENT_IDENTITIES_ANSWER: UInt8 = 0x0c
@@ -34,6 +74,12 @@ class SSHAgentCommunicator {
     // A wedged ssh-agent must not be able to hang callers indefinitely -
     // notably the app-termination path, which runs under a limited budget.
     private static let socketTimeout = timeval(tv_sec: 2, tv_usec: 0)
+
+    // Real ssh-agent implementations reply with far less than this. A
+    // declared size above it is treated as malformed rather than trusted
+    // enough to allocate - an attacker-controlled msgLen must not be able
+    // to drive an unbounded Data(count:) allocation.
+    private static let maxMessageSize: UInt32 = 256 * 1024
 
     private let socketPath: String
 
@@ -128,6 +174,14 @@ class SSHAgentCommunicator {
             NSLog("Failure getting list of keys")
             return nil
         }
+        // msgLen must at minimum cover the 1-byte type (already consumed
+        // above) and the 4-byte key count read next; anything smaller is
+        // malformed. The upper bound rejects an implausible size before it
+        // can drive an unbounded allocation below.
+        guard msgLen >= 5, msgLen <= SSHAgentCommunicator.maxMessageSize else {
+            NSLog("Rejecting identities response of implausible size (\(msgLen) bytes)")
+            return nil
+        }
 
         guard let nKeysBuf = recvAll(fd, count: 4) else { return nil }
         let nKeys = UInt32(bigEndian: nKeysBuf.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
@@ -136,36 +190,36 @@ class SSHAgentCommunicator {
         guard payloadLen > 0 else { return [] }
         guard let payload = recvAll(fd, count: payloadLen) else { return nil }
 
+        var cursor = PayloadCursor(payload)
         var keys = [SSHKey]()
-        var offset = 0
 
         for _ in 0..<nKeys {
-            guard offset + 4 <= payloadLen else { break }
-            let blobLen = Int(UInt32(bigEndian: payload[offset..<offset+4]
-                .withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) }))
-            offset += 4
-            guard offset + blobLen <= payloadLen else { break }
+            guard let blob = cursor.readLengthPrefixedBytes() else {
+                NSLog("Malformed identities response from agent (truncated key blob)")
+                return nil
+            }
+            guard let comment = cursor.readLengthPrefixedBytes() else {
+                NSLog("Malformed identities response from agent (truncated comment)")
+                return nil
+            }
 
-            let blob = payload[offset..<offset + blobLen]
             let digest = SHA256.hash(data: blob)
             let b64 = Data(digest).base64EncodedString()
                 .trimmingCharacters(in: CharacterSet(charactersIn: "="))
             let fingerprint = "SHA256:" + b64
 
-            let typeLen = Int(UInt32(bigEndian: payload[offset..<offset+4]
-                .withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) }))
-            let keyType = typeLen > 0 ? String(bytes: payload[offset+4..<offset+4+typeLen], encoding: .utf8) ?? "" : ""
-            offset += blobLen
+            // The human-readable key type (e.g. "ssh-ed25519") is itself the
+            // leading length-prefixed string inside the blob - SSH public-key
+            // blobs are `string algorithm-name` followed by algorithm-specific
+            // data, not a separate wire field. Parsing it through its own
+            // cursor keeps a bogus embedded length from reading past this
+            // blob's own bounds into whatever follows in payload.
+            var blobCursor = PayloadCursor(blob)
+            let keyType = blobCursor.readLengthPrefixedBytes()
+                .flatMap { String(bytes: $0, encoding: .utf8) } ?? ""
+            let commentString = String(bytes: comment, encoding: .utf8) ?? ""
 
-            guard offset + 4 <= payloadLen else { break }
-            let commentLen = Int(UInt32(bigEndian: payload[offset..<offset+4]
-                .withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) }))
-            offset += 4
-            guard offset + commentLen <= payloadLen else { break }
-            let comment = String(bytes: payload[offset..<offset+commentLen], encoding: .utf8) ?? ""
-            offset += commentLen
-
-            keys.append(SSHKey(type: keyType, fingerprint: fingerprint, comment: comment, keyBlob: Data(blob)))
+            keys.append(SSHKey(type: keyType, fingerprint: fingerprint, comment: commentString, keyBlob: Data(blob)))
         }
         return keys
     }
