@@ -64,6 +64,33 @@ final class ExemptionStorePersistenceTests: XCTestCase {
         XCTAssertTrue(store2.isExempt(fingerprint: fingerprintB))
     }
 
+    func testBatchUnexemptRemovesOnlyMatchingFingerprints() {
+        let store = ExemptionStore(fileURL: fileURL)
+        let fingerprintC = "SHA256:AAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHIIIIJJJJKKK"
+        store.exempt(fingerprint: fingerprintA, label: "a")
+        store.exempt(fingerprint: fingerprintB, label: "b")
+        store.exempt(fingerprint: fingerprintC, label: "c")
+
+        // Includes one fingerprint the store doesn't know about - must not
+        // affect the others.
+        store.unexempt(fingerprints: [fingerprintA, fingerprintC, "SHA256:unknown"])
+
+        XCTAssertFalse(store.isExempt(fingerprint: fingerprintA))
+        XCTAssertTrue(store.isExempt(fingerprint: fingerprintB))
+        XCTAssertFalse(store.isExempt(fingerprint: fingerprintC))
+        XCTAssertEqual(store.exemptions.count, 1)
+    }
+
+    func testBatchUnexemptWithNoMatchesIsANoOpAndDoesNotWrite() {
+        let store = ExemptionStore(fileURL: fileURL)
+        store.exempt(fingerprint: fingerprintA, label: "a")
+
+        store.unexempt(fingerprints: ["SHA256:unknown1", "SHA256:unknown2"])
+
+        XCTAssertTrue(store.isExempt(fingerprint: fingerprintA))
+        XCTAssertEqual(store.exemptions.count, 1)
+    }
+
     func testSetLabelPersistsAcrossInstances() {
         let store1 = ExemptionStore(fileURL: fileURL)
         store1.exempt(fingerprint: fingerprintA, label: "old label")

@@ -68,6 +68,17 @@ final class ExemptionStore {
         save()
     }
 
+    // Removes several exemptions with a single save(), rather than the
+    // caller looping unexempt(fingerprint:) and writing the whole plist
+    // once per removal.
+    func unexempt(fingerprints toRemove: Set<String>) {
+        let matching = toRemove.intersection(fingerprints)
+        guard !matching.isEmpty else { return }
+        exemptions.removeAll { matching.contains($0.fingerprint) }
+        sortAndReindex()
+        save()
+    }
+
     func setLabel(_ label: String, for fingerprint: String) {
         guard let index = exemptions.firstIndex(where: { $0.fingerprint == fingerprint }) else { return }
         exemptions[index].label = label
