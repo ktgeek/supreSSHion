@@ -51,6 +51,9 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
         exemptionsWindow = ExemptionsWindow(supervisor: supervisor)
 
         installTerminationSignalHandlers()
+
+        NotificationPresenter.requestAuthorization()
+        NotificationPresenter.surfacePendingTerminationFailure()
     }
 
     // `killall supreSSHion` (SIGTERM) and Ctrl-C on a terminal-launched

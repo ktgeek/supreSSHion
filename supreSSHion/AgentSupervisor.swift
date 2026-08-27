@@ -68,7 +68,9 @@ class AgentSupervisor : NSObject {
     @objc func screenLockedReceived() {
         screenIsLocked = true
         if !supressionState.isDisabled {
-            removeUnexemptedKeys()
+            if case .failure(let error) = removeUnexemptedKeys() {
+                NotificationPresenter.notifyAutomaticFailure(reason: "the screen locked", error: error)
+            }
         }
     }
 
@@ -90,8 +92,10 @@ class AgentSupervisor : NSObject {
     // ignores exemptions. Only automatic lock/timer removal spares exempted keys;
     // see removeUnexemptedKeys().
     func removeKeysNow() {
-        let sshAgentCommicator = SSHAgentCommunicator()
-        sshAgentCommicator.removeKeys()
+        let communicator = SSHAgentCommunicator()
+        if case .failure(let error) = communicator.removeKeys() {
+            NotificationPresenter.presentUserInitiatedFailure(error)
+        }
         refreshKeysCount()
     }
 
@@ -101,21 +105,40 @@ class AgentSupervisor : NSObject {
     func removeKeysOnTermination() {
         NSLog("Removing keys because supreSSHion is quitting")
         timerEarlyExit()
-        removeUnexemptedKeys()
+        // There's no time budget left here to show a notification - see
+        // NotificationPresenter.recordTerminationFailure().
+        if case .failure = removeUnexemptedKeys() {
+            NotificationPresenter.recordTerminationFailure()
+        }
     }
 
-    func removeUnexemptedKeys() {
+    @discardableResult
+    func removeUnexemptedKeys() -> Result<Void, AgentError> {
         let communicator = SSHAgentCommunicator()
-        let keys = (try? communicator.getLoadedKeys().get()) ?? []
+        let listResult = communicator.getLoadedKeys()
+        let keys = (try? listResult.get()) ?? []
         let toRemove = keys.filter { !exemptions.isExempt(fingerprint: $0.fingerprint) }
 
+        let removalResult: Result<Void, AgentError>
         if toRemove.count == keys.count {
-            communicator.removeKeys()
+            removalResult = communicator.removeKeys()
         } else {
-            for key in toRemove { communicator.removeKey(blob: key.keyBlob) }
+            var lastFailure: AgentError?
+            for key in toRemove {
+                if case .failure(let error) = communicator.removeKey(blob: key.keyBlob) {
+                    lastFailure = error
+                }
+            }
             NSLog("Kept \(keys.count - toRemove.count) exempted key(s) loaded")
+            removalResult = lastFailure.map { .failure($0) } ?? .success(())
         }
         refreshKeysCount()
+
+        // A failed list fetch is reported even though, until the exempted-
+        // keys handling is revisited, it's still treated the same as an
+        // empty key list for the removal itself.
+        if case .failure(let error) = listResult { return .failure(error) }
+        return removalResult
     }
 
     func resume() {
@@ -143,7 +166,9 @@ class AgentSupervisor : NSObject {
         disableTimer = nil
         if screenIsLocked {
             NSLog("Removing keys because the screen is locked and the disable timer expired")
-            removeUnexemptedKeys()
+            if case .failure(let error) = removeUnexemptedKeys() {
+                NotificationPresenter.notifyAutomaticFailure(reason: "the disable timer expired", error: error)
+            }
         }
         else {
             NSLog("Not removing keys because the screen is unlocked")
@@ -188,7 +213,15 @@ class AgentSupervisor : NSObject {
 
     func removeSelectedKeys(_ keys: [SSHKey]) {
         let communicator = SSHAgentCommunicator()
-        for key in keys { communicator.removeKey(blob: key.keyBlob) }
+        var lastFailure: AgentError?
+        for key in keys {
+            if case .failure(let error) = communicator.removeKey(blob: key.keyBlob) {
+                lastFailure = error
+            }
+        }
+        if let lastFailure {
+            NotificationPresenter.presentUserInitiatedFailure(lastFailure)
+        }
         refreshKeysCount()
         fetchLoadedKeys()
     }
