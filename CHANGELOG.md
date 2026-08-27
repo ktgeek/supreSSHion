@@ -15,6 +15,11 @@ follow `MAJOR.MINOR` (no patch component unless a patch release is actually need
   notification; a removal you triggered yourself gets an alert; a removal that fails during quit
   (no time budget left to show anything) is reported the next time supreSSHion launches instead.
 
+### Changed
+
+- Minimum supported macOS is now 15.0 Sequoia (previously 15.6, though that was only the target
+  setting actually in effect — a stray project-level setting had read 11.0, which this also fixes).
+
 ### Fixed
 
 - A wire-protocol response from ssh-agent that didn't match the expected format could crash
