@@ -12,7 +12,13 @@ xcodebuild -scheme supreSSHion -configuration Debug build
 xcodebuild -scheme supreSSHion -configuration Release build
 ```
 
-No tests, no linting tools, and no external dependencies (no CocoaPods/SPM/Carthage).
+Tests (target `supreSSHionTests`, hosted inside the app via `TEST_HOST`/`BUNDLE_LOADER` so
+`@testable import supreSSHion` can see internal types):
+```bash
+xcodebuild -scheme supreSSHion -configuration Debug -destination 'platform=macOS' test
+```
+
+No linting tools, and no external dependencies (no CocoaPods/SPM/Carthage).
 
 ## Architecture
 
