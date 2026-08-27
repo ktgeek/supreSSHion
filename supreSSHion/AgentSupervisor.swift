@@ -26,7 +26,7 @@ import Observation
 
 @Observable
 class AgentSupervisor : NSObject {
-    var supressionState: SupresshionState
+    var suppressionState: SupresshionState
     let exemptions: ExemptionStore
     var disableTimer: Timer?
     var screenIsLocked = false
@@ -40,7 +40,7 @@ class AgentSupervisor : NSObject {
     var lastError: AgentError?
 
     init(state: SupresshionState, exemptions: ExemptionStore = ExemptionStore()) {
-        supressionState = state
+        suppressionState = state
         self.exemptions = exemptions
         super.init()
 
@@ -66,7 +66,7 @@ class AgentSupervisor : NSObject {
 
     @objc func screenLockedReceived() {
         screenIsLocked = true
-        if !supressionState.isDisabled {
+        if !suppressionState.isDisabled {
             if case .failure(let error) = removeUnexemptedKeys() {
                 NotificationPresenter.notifyAutomaticFailure(reason: "the screen locked", error: error)
             }
@@ -80,10 +80,10 @@ class AgentSupervisor : NSObject {
 
     // sleeping automatically resumes the key removal behavior. When
     // OS X sleeps it issues a sleep notification and then a screen
-    // lock notification so we only reset the supressionState on the
+    // lock notification so we only reset the suppressionState on the
     // sleep notification.
     @objc func workplaceWillSleepReceived() {
-        supressionState.resume()
+        suppressionState.resume()
         timerEarlyExit()
     }
 
@@ -152,19 +152,19 @@ class AgentSupervisor : NSObject {
     }
 
     func resume() {
-        supressionState.resume()
+        suppressionState.resume()
         timerEarlyExit()
     }
 
     func disable() {
-        supressionState.disable()
+        suppressionState.disable()
         timerEarlyExit()
     }
 
     func disable(forInterval: TimeInterval) {
         disableTimer?.invalidate()
         let date = Date() + forInterval
-        supressionState.disable(until: date)
+        suppressionState.disable(until: date)
 
         disableTimer = Timer.scheduledTimer(withTimeInterval: forInterval, repeats: false) { [weak self] _ in
             self?.timerExpired()
@@ -172,7 +172,7 @@ class AgentSupervisor : NSObject {
     }
 
     @objc func timerExpired() {
-        supressionState.resume()
+        suppressionState.resume()
         disableTimer = nil
         if screenIsLocked {
             NSLog("Removing keys because the screen is locked and the disable timer expired")

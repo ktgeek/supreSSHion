@@ -134,11 +134,11 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     func menuWillOpen(_ menu: NSMenu) {
         supervisor.refresh()
-        stateItem?.title = supervisor.supressionState.statusMessage
+        stateItem?.title = supervisor.suppressionState.statusMessage
         keysItem?.title = supervisor.keysLoadedMessage
         keysItem?.isEnabled = supervisor.loadedKeysCount > 0
         keysItem?.toolTip = supervisor.lastError?.localizedDescription
-        resumeItem?.isHidden = !supervisor.supressionState.isDisabled
+        resumeItem?.isHidden = !supervisor.suppressionState.isDisabled
     }
 
     @objc private func resumeAction() { supervisor.resume() }

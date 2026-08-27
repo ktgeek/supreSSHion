@@ -26,12 +26,12 @@ import Observation
 @Observable
 class SupresshionState {
 
-    private var infinatelyDisabled = false
+    private var infinitelyDisabled = false
     private var disabledUntil: Date?
 
     var isDisabled: Bool {
         get {
-            if infinatelyDisabled {
+            if infinitelyDisabled {
                 return true
             }
 
@@ -45,7 +45,7 @@ class SupresshionState {
                 return "Active"
             }
 
-            if infinatelyDisabled {
+            if infinitelyDisabled {
                 return "Disabled"
             }
 
@@ -57,17 +57,17 @@ class SupresshionState {
     }
 
     func disable() {
-        infinatelyDisabled = true
+        infinitelyDisabled = true
         disabledUntil = nil
     }
 
     func disable(until:Date) {
         disabledUntil = until
-        infinatelyDisabled = false
+        infinitelyDisabled = false
     }
 
     func resume() {
-        infinatelyDisabled = false
+        infinitelyDisabled = false
         disabledUntil = nil
     }
 }
