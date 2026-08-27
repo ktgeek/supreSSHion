@@ -22,6 +22,15 @@ the expiration time of the disable has been reached, the keys will be removed.
 When a sleep event is received, it will reactivate the key removal if the user had disabled the key unloading
 functionality.
 
+### When ssh-agent can't be reached
+
+If supreSSHion can't reach ssh-agent — `SSH_AUTH_SOCK` isn't set, the socket isn't there, or the
+agent doesn't respond — the menu says so ("Cannot reach ssh-agent") instead of reading the same as
+"0 keys loaded." A removal that fails in the background (screen lock, disable-timer expiry) posts
+a system notification; a removal you trigger yourself (menu, Keys window) shows an alert; a
+removal that fails during quit has no time left to show anything before the process exits, so it's
+reported the next time supreSSHion launches instead.
+
 ### Key removal on quit
 
 Quitting supreSSHion also removes all loaded keys (exempted keys are kept — see below), even if key removal is
