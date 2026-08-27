@@ -44,6 +44,24 @@ final class FakeSSHAgent {
     let socketPath: String
     private let listenFD: Int32
 
+    private let acceptCountLock = NSLock()
+    private var _acceptCount = 0
+
+    /// How many connections have been accepted so far. Lets tests verify a
+    /// batch of operations shared a single connection instead of
+    /// reconnecting per operation.
+    var acceptCount: Int {
+        acceptCountLock.lock()
+        defer { acceptCountLock.unlock() }
+        return _acceptCount
+    }
+
+    private func recordAccept() {
+        acceptCountLock.lock()
+        _acceptCount += 1
+        acceptCountLock.unlock()
+    }
+
     init() throws {
         socketPath = NSTemporaryDirectory() + "fake-agent-\(UUID().uuidString).sock"
 
@@ -83,6 +101,7 @@ final class FakeSSHAgent {
         DispatchQueue.global(qos: .userInitiated).async {
             let clientFD = accept(fd, nil, nil)
             guard clientFD >= 0 else { return }
+            self.recordAccept()
             defer { close(clientFD) }
 
             var reqBuf = [UInt8](repeating: 0, count: 5)
@@ -91,6 +110,20 @@ final class FakeSSHAgent {
             response.withUnsafeBytes { raw in
                 _ = send(clientFD, raw.baseAddress, response.count, 0)
             }
+        }
+    }
+
+    /// Accepts one connection and hands it to `handler` for full control
+    /// over the exchange, rather than a single canned request/response.
+    /// Used to verify multi-round-trip behavior over a single connection.
+    func handleOnce(_ handler: @escaping (Int32) -> Void) {
+        let fd = listenFD
+        DispatchQueue.global(qos: .userInitiated).async {
+            let clientFD = accept(fd, nil, nil)
+            guard clientFD >= 0 else { return }
+            self.recordAccept()
+            defer { close(clientFD) }
+            handler(clientFD)
         }
     }
 
@@ -104,6 +137,7 @@ final class FakeSSHAgent {
 /// including deliberately malformed ones.
 enum FakeAgentResponse {
     static let identitiesAnswerType: UInt8 = 0x0c
+    static let agentSuccess: UInt8 = 0x06
 
     /// Exposed (not private) so tests can build deliberately-wrong length
     /// fields directly, rather than only well-formed ones via
@@ -135,5 +169,16 @@ enum FakeAgentResponse {
     static func identitiesAnswer(nKeys: UInt32, entries: Data, overrideMsgLen: UInt32? = nil) -> Data {
         let msgLen = overrideMsgLen ?? UInt32(1 + 4 + entries.count)
         return bigEndianBytes(msgLen) + Data([identitiesAnswerType]) + bigEndianBytes(nKeys) + entries
+    }
+
+    /// A full SSH_AGENT_SUCCESS response: [4-byte len=1][1-byte status].
+    static func successResponse() -> Data {
+        bigEndianBytes(1) + Data([agentSuccess])
+    }
+
+    /// The wire size of a single REMOVE_IDENTITY request for a blob of the
+    /// given size: [4-byte payloadLen][1-byte cmd][4-byte blobLen][blob].
+    static func removeIdentityRequestSize(forBlobSize blobSize: Int) -> Int {
+        4 + 1 + 4 + blobSize
     }
 }

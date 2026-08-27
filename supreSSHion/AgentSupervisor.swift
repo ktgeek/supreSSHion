@@ -140,14 +140,8 @@ class AgentSupervisor : NSObject {
             if toRemove.count == keys.count {
                 removalResult = communicator.removeKeys()
             } else {
-                var lastFailure: AgentError?
-                for key in toRemove {
-                    if case .failure(let error) = communicator.removeKey(blob: key.keyBlob) {
-                        lastFailure = error
-                    }
-                }
+                removalResult = communicator.removeKeys(blobs: toRemove.map { $0.keyBlob })
                 NSLog("Kept \(keys.count - toRemove.count) exempted key(s) loaded")
-                removalResult = lastFailure.map { .failure($0) } ?? .success(())
             }
             refreshKeysCount()
             return removalResult
@@ -226,14 +220,8 @@ class AgentSupervisor : NSObject {
 
     func removeSelectedKeys(_ keys: [SSHKey]) {
         let communicator = SSHAgentCommunicator()
-        var lastFailure: AgentError?
-        for key in keys {
-            if case .failure(let error) = communicator.removeKey(blob: key.keyBlob) {
-                lastFailure = error
-            }
-        }
-        if let lastFailure {
-            NotificationPresenter.presentUserInitiatedFailure(lastFailure)
+        if case .failure(let error) = communicator.removeKeys(blobs: keys.map { $0.keyBlob }) {
+            NotificationPresenter.presentUserInitiatedFailure(error)
         }
         refreshKeysCount()
         fetchLoadedKeys()
