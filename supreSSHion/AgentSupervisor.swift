@@ -166,8 +166,8 @@ class AgentSupervisor : NSObject {
         let date = Date() + forInterval
         supressionState.disable(until: date)
 
-        disableTimer = Timer.scheduledTimer(withTimeInterval: forInterval, repeats: false) { _ in
-            self.timerExpired()
+        disableTimer = Timer.scheduledTimer(withTimeInterval: forInterval, repeats: false) { [weak self] _ in
+            self?.timerExpired()
         }
     }
 
