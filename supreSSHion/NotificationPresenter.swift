@@ -34,6 +34,7 @@ import UserNotifications
 ///   time budget left to show anything before the process exits - so a
 ///   marker file is left instead, and surfaced as a notification the next
 ///   time the app launches.
+@MainActor
 enum NotificationPresenter {
     private static let quitFailureFlagURL = ExemptionStore.defaultFileURL
         .deletingLastPathComponent()

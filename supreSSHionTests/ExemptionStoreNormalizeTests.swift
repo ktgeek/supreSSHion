@@ -23,6 +23,7 @@
 import XCTest
 @testable import supreSSHion
 
+@MainActor
 final class ExemptionStoreNormalizeTests: XCTestCase {
     // A real SHA-256 digest, base64 encoded without padding, as SSHAgentCommunicator
     // and ssh-add -l would print it.

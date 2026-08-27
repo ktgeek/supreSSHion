@@ -25,6 +25,7 @@ import AppKit
 import Observation
 
 @Observable
+@MainActor
 class AgentSupervisor : NSObject {
     let suppressionState: SupresshionState
     let exemptions: ExemptionStore
@@ -166,8 +167,15 @@ class AgentSupervisor : NSObject {
         let date = Date() + forInterval
         suppressionState.disable(until: date)
 
+        // Timer's closure isn't statically known to run on the main actor
+        // (it fires on whatever run loop it's scheduled against), even
+        // though in practice that's always the main run loop here since
+        // this method only ever runs on the main actor itself. Task { @MainActor }
+        // satisfies the isolation check; the hop is effectively immediate.
         disableTimer = Timer.scheduledTimer(withTimeInterval: forInterval, repeats: false) { [weak self] _ in
-            self?.timerExpired()
+            Task { @MainActor in
+                self?.timerExpired()
+            }
         }
     }
 
@@ -240,9 +248,18 @@ class AgentSupervisor : NSObject {
     }
 
     deinit {
-        timerEarlyExit()
-        DistributedNotificationCenter.default().removeObserver(self)
-        NSWorkspace.shared.notificationCenter.removeObserver(self)
+        // deinit is never actor-isolated, even on a @MainActor class, since
+        // Swift can't statically guarantee what thread deallocation happens
+        // on. In practice this instance is only ever created, used, and
+        // released on the main actor (MenuBarManager, itself @MainActor,
+        // holds the only reference for the app's lifetime), so
+        // assumeIsolated's runtime assertion is safe here - it traps if
+        // that assumption is ever wrong, rather than silently racing.
+        MainActor.assumeIsolated {
+            timerEarlyExit()
+            DistributedNotificationCenter.default().removeObserver(self)
+            NSWorkspace.shared.notificationCenter.removeObserver(self)
+        }
     }
 }
 
