@@ -91,7 +91,9 @@ class SSHAgentCommunicator {
         self.socketPath = socketPath
     }
 
-    private func openSocket() -> Int32? {
+    private func openSocket() throws -> Int32 {
+        guard !socketPath.isEmpty else { throw AgentError.noAuthSock }
+
         var addr = sockaddr_un()
         addr.sun_family = sa_family_t(AF_UNIX)
         let pathCapacity = MemoryLayout.size(ofValue: addr.sun_path)
@@ -101,13 +103,17 @@ class SSHAgentCommunicator {
         addr.sun_len = UInt8(MemoryLayout<sockaddr_un>.size - MemoryLayout.size(ofValue: addr.sun_path) + socketPath.utf8.count)
 
         let fd = socket(PF_UNIX, SOCK_STREAM, 0)
-        guard fd >= 0 else { return nil }
+        guard fd >= 0 else { throw AgentError.connectFailed(errno: errno) }
         let rc = withUnsafePointer(to: &addr) {
             $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {
                 Darwin.connect(fd, $0, socklen_t(MemoryLayout<sockaddr_un>.size))
             }
         }
-        guard rc == 0 else { Darwin.close(fd); return nil }
+        guard rc == 0 else {
+            let connectErrno = errno
+            Darwin.close(fd)
+            throw AgentError.connectFailed(errno: connectErrno)
+        }
 
         var timeout = SSHAgentCommunicator.socketTimeout
         setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &timeout, socklen_t(MemoryLayout<timeval>.size))
@@ -123,112 +129,143 @@ class SSHAgentCommunicator {
         _ = buf.withUnsafeBytes { Darwin.send(fd, $0.baseAddress!, 5, 0) }
     }
 
-    private func recvAll(_ fd: Int32, count: Int) -> Data? {
+    // Timeout is detected via errno after a short/failed recv: SO_RCVTIMEO
+    // causes recv() to return -1/EAGAIN rather than a partial count. Any
+    // other short read (including a clean EOF) is treated as a malformed
+    // response rather than a timeout.
+    private func recvAll(_ fd: Int32, count: Int) throws -> Data {
         var data = Data(count: count)
         let n = data.withUnsafeMutableBytes {
             Darwin.recv(fd, $0.baseAddress!, count, Int32(MSG_WAITALL))
         }
-        return n == count ? data : nil
+        guard n == count else {
+            if n < 0, errno == EAGAIN || errno == EWOULDBLOCK { throw AgentError.timeout }
+            throw AgentError.malformedResponse
+        }
+        return data
     }
 
-    func removeKeys() {
-        guard let fd = openSocket() else { return }
-        defer { Darwin.close(fd) }
-        sendCommand(SSHAgentCommunicator.SSH_AGENTC_REMOVE_ALL_IDENTITIES, to: fd)
-        guard let resp = recvAll(fd, count: 5) else { return }
-        let len = UInt32(bigEndian: resp.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
-        if len == 1 && resp[4] == SSHAgentCommunicator.SSH_AGENT_SUCCESS {
+    // Runs a throwing body that only ever throws AgentError, converting the
+    // outcome to a Result at the public API boundary. Keeps the call sites
+    // below written as plain `try`/`guard` rather than nested Result
+    // switches.
+    private func run<T>(_ body: () throws -> T) -> Result<T, AgentError> {
+        do {
+            return .success(try body())
+        } catch let error as AgentError {
+            return .failure(error)
+        } catch {
+            return .failure(.malformedResponse)
+        }
+    }
+
+    @discardableResult
+    func removeKeys() -> Result<Void, AgentError> {
+        run {
+            let fd = try openSocket()
+            defer { Darwin.close(fd) }
+            sendCommand(SSHAgentCommunicator.SSH_AGENTC_REMOVE_ALL_IDENTITIES, to: fd)
+            let resp = try recvAll(fd, count: 5)
+            let len = UInt32(bigEndian: resp.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
+            guard len == 1, resp[4] == SSHAgentCommunicator.SSH_AGENT_SUCCESS else {
+                NSLog("Failure removing keys from agent")
+                throw AgentError.agentRefused
+            }
             NSLog("Successfully removed keys")
-        } else {
-            NSLog("Failure removing keys from agent")
         }
     }
 
-    func removeKey(blob: Data) {
-        guard let fd = openSocket() else { return }
-        defer { Darwin.close(fd) }
-        let payloadLen = 1 + 4 + blob.count
-        var buf = Data(count: 4 + payloadLen)
-        withUnsafeBytes(of: UInt32(payloadLen).bigEndian) { buf.replaceSubrange(0..<4, with: $0) }
-        buf[4] = SSHAgentCommunicator.SSH_AGENTC_REMOVE_IDENTITY
-        withUnsafeBytes(of: UInt32(blob.count).bigEndian) { buf.replaceSubrange(5..<9, with: $0) }
-        buf.replaceSubrange(9..<9+blob.count, with: blob)
-        _ = buf.withUnsafeBytes { Darwin.send(fd, $0.baseAddress!, 4 + payloadLen, 0) }
-        guard let resp = recvAll(fd, count: 5) else { return }
-        let len = UInt32(bigEndian: resp.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
-        if len == 1 && resp[4] == SSHAgentCommunicator.SSH_AGENT_SUCCESS {
+    @discardableResult
+    func removeKey(blob: Data) -> Result<Void, AgentError> {
+        run {
+            let fd = try openSocket()
+            defer { Darwin.close(fd) }
+            let payloadLen = 1 + 4 + blob.count
+            var buf = Data(count: 4 + payloadLen)
+            withUnsafeBytes(of: UInt32(payloadLen).bigEndian) { buf.replaceSubrange(0..<4, with: $0) }
+            buf[4] = SSHAgentCommunicator.SSH_AGENTC_REMOVE_IDENTITY
+            withUnsafeBytes(of: UInt32(blob.count).bigEndian) { buf.replaceSubrange(5..<9, with: $0) }
+            buf.replaceSubrange(9..<9+blob.count, with: blob)
+            _ = buf.withUnsafeBytes { Darwin.send(fd, $0.baseAddress!, 4 + payloadLen, 0) }
+            let resp = try recvAll(fd, count: 5)
+            let len = UInt32(bigEndian: resp.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
+            guard len == 1, resp[4] == SSHAgentCommunicator.SSH_AGENT_SUCCESS else {
+                NSLog("Failure removing key from agent")
+                throw AgentError.agentRefused
+            }
             NSLog("Successfully removed key")
-        } else {
-            NSLog("Failure removing key from agent")
         }
     }
 
-    func getLoadedKeys() -> [SSHKey]? {
-        guard let fd = openSocket() else { return nil }
-        defer { Darwin.close(fd) }
-        sendCommand(SSHAgentCommunicator.SSH_AGENTC_REQUEST_IDENTITIES, to: fd)
+    func getLoadedKeys() -> Result<[SSHKey], AgentError> {
+        run {
+            let fd = try openSocket()
+            defer { Darwin.close(fd) }
+            sendCommand(SSHAgentCommunicator.SSH_AGENTC_REQUEST_IDENTITIES, to: fd)
 
-        guard let header = recvAll(fd, count: 5) else { return nil }
-        let msgLen = UInt32(bigEndian: header.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
-        guard header[4] == SSHAgentCommunicator.SSH_AGENT_IDENTITIES_ANSWER else {
-            NSLog("Failure getting list of keys")
-            return nil
-        }
-        // msgLen must at minimum cover the 1-byte type (already consumed
-        // above) and the 4-byte key count read next; anything smaller is
-        // malformed. The upper bound rejects an implausible size before it
-        // can drive an unbounded allocation below.
-        guard msgLen >= 5, msgLen <= SSHAgentCommunicator.maxMessageSize else {
-            NSLog("Rejecting identities response of implausible size (\(msgLen) bytes)")
-            return nil
-        }
-
-        guard let nKeysBuf = recvAll(fd, count: 4) else { return nil }
-        let nKeys = UInt32(bigEndian: nKeysBuf.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
-
-        let payloadLen = Int(msgLen) - 5
-        guard payloadLen > 0 else { return [] }
-        guard let payload = recvAll(fd, count: payloadLen) else { return nil }
-
-        var cursor = PayloadCursor(payload)
-        var keys = [SSHKey]()
-
-        for _ in 0..<nKeys {
-            guard let blob = cursor.readLengthPrefixedBytes() else {
-                NSLog("Malformed identities response from agent (truncated key blob)")
-                return nil
+            let header = try recvAll(fd, count: 5)
+            let msgLen = UInt32(bigEndian: header.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
+            guard header[4] == SSHAgentCommunicator.SSH_AGENT_IDENTITIES_ANSWER else {
+                NSLog("Failure getting list of keys")
+                throw AgentError.malformedResponse
             }
-            guard let comment = cursor.readLengthPrefixedBytes() else {
-                NSLog("Malformed identities response from agent (truncated comment)")
-                return nil
+            // msgLen must at minimum cover the 1-byte type (already consumed
+            // above) and the 4-byte key count read next; anything smaller is
+            // malformed. The upper bound rejects an implausible size before
+            // it can drive an unbounded allocation below.
+            guard msgLen >= 5, msgLen <= SSHAgentCommunicator.maxMessageSize else {
+                NSLog("Rejecting identities response of implausible size (\(msgLen) bytes)")
+                throw AgentError.malformedResponse
             }
 
-            let digest = SHA256.hash(data: blob)
-            let b64 = Data(digest).base64EncodedString()
-                .trimmingCharacters(in: CharacterSet(charactersIn: "="))
-            let fingerprint = "SHA256:" + b64
+            let nKeysBuf = try recvAll(fd, count: 4)
+            let nKeys = UInt32(bigEndian: nKeysBuf.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
 
-            // The human-readable key type (e.g. "ssh-ed25519") is itself the
-            // leading length-prefixed string inside the blob - SSH public-key
-            // blobs are `string algorithm-name` followed by algorithm-specific
-            // data, not a separate wire field. Parsing it through its own
-            // cursor keeps a bogus embedded length from reading past this
-            // blob's own bounds into whatever follows in payload; a length
-            // that doesn't fit is the same kind of malformed input as a
-            // truncated blob or comment above, so it's treated the same way.
-            var blobCursor = PayloadCursor(blob)
-            guard let typeBytes = blobCursor.readLengthPrefixedBytes() else {
-                NSLog("Malformed identities response from agent (invalid key type length)")
-                return nil
+            let payloadLen = Int(msgLen) - 5
+            guard payloadLen > 0 else { return [] }
+            let payload = try recvAll(fd, count: payloadLen)
+
+            var cursor = PayloadCursor(payload)
+            var keys = [SSHKey]()
+
+            for _ in 0..<nKeys {
+                guard let blob = cursor.readLengthPrefixedBytes() else {
+                    NSLog("Malformed identities response from agent (truncated key blob)")
+                    throw AgentError.malformedResponse
+                }
+                guard let comment = cursor.readLengthPrefixedBytes() else {
+                    NSLog("Malformed identities response from agent (truncated comment)")
+                    throw AgentError.malformedResponse
+                }
+
+                let digest = SHA256.hash(data: blob)
+                let b64 = Data(digest).base64EncodedString()
+                    .trimmingCharacters(in: CharacterSet(charactersIn: "="))
+                let fingerprint = "SHA256:" + b64
+
+                // The human-readable key type (e.g. "ssh-ed25519") is itself
+                // the leading length-prefixed string inside the blob - SSH
+                // public-key blobs are `string algorithm-name` followed by
+                // algorithm-specific data, not a separate wire field.
+                // Parsing it through its own cursor keeps a bogus embedded
+                // length from reading past this blob's own bounds into
+                // whatever follows in payload; a length that doesn't fit is
+                // the same kind of malformed input as a truncated blob or
+                // comment above, so it's treated the same way.
+                var blobCursor = PayloadCursor(blob)
+                guard let typeBytes = blobCursor.readLengthPrefixedBytes() else {
+                    NSLog("Malformed identities response from agent (invalid key type length)")
+                    throw AgentError.malformedResponse
+                }
+                // A non-UTF8 type string is tolerated as empty for now -
+                // decode failures are a separate, lower-severity concern
+                // from bounds safety.
+                let keyType = String(bytes: typeBytes, encoding: .utf8) ?? ""
+                let commentString = String(bytes: comment, encoding: .utf8) ?? ""
+
+                keys.append(SSHKey(type: keyType, fingerprint: fingerprint, comment: commentString, keyBlob: Data(blob)))
             }
-            // A non-UTF8 type string is tolerated as empty for now - decode
-            // failures are a separate, lower-severity concern from bounds
-            // safety.
-            let keyType = String(bytes: typeBytes, encoding: .utf8) ?? ""
-            let commentString = String(bytes: comment, encoding: .utf8) ?? ""
-
-            keys.append(SSHKey(type: keyType, fingerprint: fingerprint, comment: commentString, keyBlob: Data(blob)))
+            return keys
         }
-        return keys
     }
 }

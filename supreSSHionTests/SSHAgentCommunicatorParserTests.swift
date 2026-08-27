@@ -28,7 +28,7 @@ import XCTest
 /// malformed-input case here previously either crashed the process (a
 /// Range-out-of-bounds trap) or, for the embedded key-type field, could
 /// read past a key blob's own bounds. After the PayloadCursor rewrite, every
-/// one of these must fail cleanly - getLoadedKeys() returns nil - rather
+/// one of these must fail cleanly - getLoadedKeys() returns .failure - rather
 /// than trap.
 final class SSHAgentCommunicatorParserTests: XCTestCase {
     private func expectedFingerprint(for blob: Data) -> String {
@@ -48,7 +48,7 @@ final class SSHAgentCommunicatorParserTests: XCTestCase {
 
         let agent = try FakeSSHAgent()
         agent.respondOnce(with: response)
-        let keys = SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys()
+        let keys = try? SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys().get()
 
         XCTAssertEqual(keys?.count, 2)
         XCTAssertEqual(keys?[0].type, "ssh-ed25519")
@@ -65,7 +65,7 @@ final class SSHAgentCommunicatorParserTests: XCTestCase {
 
         let agent = try FakeSSHAgent()
         agent.respondOnce(with: response)
-        let keys = SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys()
+        let keys = try? SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys().get()
 
         XCTAssertEqual(keys?.count, 0)
     }
@@ -82,7 +82,7 @@ final class SSHAgentCommunicatorParserTests: XCTestCase {
 
         let agent = try FakeSSHAgent()
         agent.respondOnce(with: response)
-        let keys = SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys()
+        let keys = try? SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys().get()
 
         XCTAssertNil(keys)
     }
@@ -97,7 +97,7 @@ final class SSHAgentCommunicatorParserTests: XCTestCase {
 
         let agent = try FakeSSHAgent()
         agent.respondOnce(with: response)
-        let keys = SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys()
+        let keys = try? SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys().get()
 
         XCTAssertNil(keys)
     }
@@ -110,7 +110,7 @@ final class SSHAgentCommunicatorParserTests: XCTestCase {
 
         let agent = try FakeSSHAgent()
         agent.respondOnce(with: response)
-        let keys = SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys()
+        let keys = try? SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys().get()
 
         XCTAssertNil(keys)
     }
@@ -124,7 +124,7 @@ final class SSHAgentCommunicatorParserTests: XCTestCase {
 
         let agent = try FakeSSHAgent()
         agent.respondOnce(with: response)
-        let keys = SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys()
+        let keys = try? SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys().get()
 
         XCTAssertNil(keys)
     }
@@ -137,7 +137,7 @@ final class SSHAgentCommunicatorParserTests: XCTestCase {
 
         let agent = try FakeSSHAgent()
         agent.respondOnce(with: response)
-        let keys = SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys()
+        let keys = try? SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys().get()
 
         XCTAssertNil(keys)
     }

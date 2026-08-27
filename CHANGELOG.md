@@ -5,6 +5,26 @@ All notable changes to supreSSHion are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Version numbers
 follow `MAJOR.MINOR` (no patch component unless a patch release is actually needed).
 
+## [Unreleased]
+
+### Added
+
+- supreSSHion now tells you when it can't reach ssh-agent, instead of that looking identical to
+  "no keys loaded." The menu shows "Cannot reach ssh-agent" with the specific reason as a tooltip.
+  A removal that fails in the background (screen lock, disable-timer expiry) posts a system
+  notification; a removal you triggered yourself gets an alert; a removal that fails during quit
+  (no time budget left to show anything) is reported the next time supreSSHion launches instead.
+
+### Fixed
+
+- A wire-protocol response from ssh-agent that didn't match the expected format could crash
+  supreSSHion outright, rather than being treated as a failure like any other. Since a crash is
+  the one case supreSSHion can't protect against, this silently defeated the app's whole purpose.
+- Automatic key removal (screen lock, disable-timer expiry) that couldn't retrieve the current key
+  list was treating that failure the same as "no keys are loaded," which could remove exempted
+  keys it should have spared, or send a pointless removal request when the agent already held no
+  keys.
+
 ## [3.0] - 2026-08-15
 
 ### Added

@@ -34,6 +34,11 @@ class AgentSupervisor : NSObject {
     var loadedKeysCount: Int = 0
     var exemptLoadedKeysCount: Int = 0
     var loadedKeys: [SSHKey] = []
+    // Reflects the outcome of the most recent attempt to reach ssh-agent
+    // (refreshKeysCount()/fetchLoadedKeys()), so the UI can distinguish
+    // "the agent has no keys loaded" from "the agent could not be reached"
+    // instead of both reading as zero keys.
+    var lastError: AgentError?
 
     init(state: SupresshionState, exemptions: ExemptionStore = ExemptionStore()) {
         supressionState = state
@@ -63,7 +68,9 @@ class AgentSupervisor : NSObject {
     @objc func screenLockedReceived() {
         screenIsLocked = true
         if !supressionState.isDisabled {
-            removeUnexemptedKeys()
+            if case .failure(let error) = removeUnexemptedKeys() {
+                NotificationPresenter.notifyAutomaticFailure(reason: "the screen locked", error: error)
+            }
         }
     }
 
@@ -85,8 +92,10 @@ class AgentSupervisor : NSObject {
     // ignores exemptions. Only automatic lock/timer removal spares exempted keys;
     // see removeUnexemptedKeys().
     func removeKeysNow() {
-        let sshAgentCommicator = SSHAgentCommunicator()
-        sshAgentCommicator.removeKeys()
+        let communicator = SSHAgentCommunicator()
+        if case .failure(let error) = communicator.removeKeys() {
+            NotificationPresenter.presentUserInitiatedFailure(error)
+        }
         refreshKeysCount()
     }
 
@@ -96,21 +105,53 @@ class AgentSupervisor : NSObject {
     func removeKeysOnTermination() {
         NSLog("Removing keys because supreSSHion is quitting")
         timerEarlyExit()
-        removeUnexemptedKeys()
+        // There's no time budget left here to show a notification - see
+        // NotificationPresenter.recordTerminationFailure().
+        if case .failure = removeUnexemptedKeys() {
+            NotificationPresenter.recordTerminationFailure()
+        }
     }
 
-    func removeUnexemptedKeys() {
+    @discardableResult
+    func removeUnexemptedKeys() -> Result<Void, AgentError> {
         let communicator = SSHAgentCommunicator()
-        let keys = communicator.getLoadedKeys() ?? []
-        let toRemove = keys.filter { !exemptions.isExempt(fingerprint: $0.fingerprint) }
+        switch communicator.getLoadedKeys() {
+        case .failure(let error):
+            // Can't tell which keys are loaded, so can't selectively spare
+            // exempted ones. Removing everything is the conservative choice
+            // - leaving keys behind because the list failed would be worse
+            // than losing an exemption for this one removal - but the
+            // failure itself must still be visible to the caller, not
+            // silently swallowed by treating it the same as "no keys."
+            NSLog("Failed to list loaded keys before automatic removal (\(error.localizedDescription)); removing all keys")
+            let removalResult = communicator.removeKeys()
+            refreshKeysCount()
+            if case .failure(let removalError) = removalResult { return .failure(removalError) }
+            return .failure(error)
 
-        if toRemove.count == keys.count {
-            communicator.removeKeys()
-        } else {
-            for key in toRemove { communicator.removeKey(blob: key.keyBlob) }
-            NSLog("Kept \(keys.count - toRemove.count) exempted key(s) loaded")
+        case .success(let keys):
+            guard !keys.isEmpty else {
+                refreshKeysCount()
+                return .success(())
+            }
+
+            let toRemove = keys.filter { !exemptions.isExempt(fingerprint: $0.fingerprint) }
+            let removalResult: Result<Void, AgentError>
+            if toRemove.count == keys.count {
+                removalResult = communicator.removeKeys()
+            } else {
+                var lastFailure: AgentError?
+                for key in toRemove {
+                    if case .failure(let error) = communicator.removeKey(blob: key.keyBlob) {
+                        lastFailure = error
+                    }
+                }
+                NSLog("Kept \(keys.count - toRemove.count) exempted key(s) loaded")
+                removalResult = lastFailure.map { .failure($0) } ?? .success(())
+            }
+            refreshKeysCount()
+            return removalResult
         }
-        refreshKeysCount()
     }
 
     func resume() {
@@ -138,7 +179,9 @@ class AgentSupervisor : NSObject {
         disableTimer = nil
         if screenIsLocked {
             NSLog("Removing keys because the screen is locked and the disable timer expired")
-            removeUnexemptedKeys()
+            if case .failure(let error) = removeUnexemptedKeys() {
+                NotificationPresenter.notifyAutomaticFailure(reason: "the disable timer expired", error: error)
+            }
         }
         else {
             NSLog("Not removing keys because the screen is unlocked")
@@ -152,23 +195,46 @@ class AgentSupervisor : NSObject {
 
     func refreshKeysCount() {
         let communicator = SSHAgentCommunicator()
-        let rawKeys = (communicator.getLoadedKeys()) ?? []
-        loadedKeysCount = rawKeys.count
-        exemptLoadedKeysCount = rawKeys.filter { exemptions.isExempt(fingerprint: $0.fingerprint) }.count
-        let implyDialog = loadedKeysCount == 0 ? "" : "…"
-        let plural = loadedKeysCount == 1 ? "" : "s"
-        let exemptClause = exemptLoadedKeysCount == 0 ? "" : " (\(exemptLoadedKeysCount) exempt)"
-        keysLoadedMessage = "\(loadedKeysCount) key\(plural) loaded\(exemptClause)\(implyDialog)"
+        switch communicator.getLoadedKeys() {
+        case .success(let rawKeys):
+            lastError = nil
+            loadedKeysCount = rawKeys.count
+            exemptLoadedKeysCount = rawKeys.filter { exemptions.isExempt(fingerprint: $0.fingerprint) }.count
+            let implyDialog = loadedKeysCount == 0 ? "" : "…"
+            let plural = loadedKeysCount == 1 ? "" : "s"
+            let exemptClause = exemptLoadedKeysCount == 0 ? "" : " (\(exemptLoadedKeysCount) exempt)"
+            keysLoadedMessage = "\(loadedKeysCount) key\(plural) loaded\(exemptClause)\(implyDialog)"
+        case .failure(let error):
+            lastError = error
+            loadedKeysCount = 0
+            exemptLoadedKeysCount = 0
+            keysLoadedMessage = "Cannot reach ssh-agent"
+        }
     }
 
     func fetchLoadedKeys() {
         let communicator = SSHAgentCommunicator()
-        loadedKeys = communicator.getLoadedKeys() ?? []
+        switch communicator.getLoadedKeys() {
+        case .success(let keys):
+            lastError = nil
+            loadedKeys = keys
+        case .failure(let error):
+            lastError = error
+            loadedKeys = []
+        }
     }
 
     func removeSelectedKeys(_ keys: [SSHKey]) {
         let communicator = SSHAgentCommunicator()
-        for key in keys { communicator.removeKey(blob: key.keyBlob) }
+        var lastFailure: AgentError?
+        for key in keys {
+            if case .failure(let error) = communicator.removeKey(blob: key.keyBlob) {
+                lastFailure = error
+            }
+        }
+        if let lastFailure {
+            NotificationPresenter.presentUserInitiatedFailure(lastFailure)
+        }
         refreshKeysCount()
         fetchLoadedKeys()
     }
