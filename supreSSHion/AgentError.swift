@@ -29,6 +29,7 @@ import Foundation
 /// agent sent something we can't parse."
 enum AgentError: Error, Equatable {
     case noAuthSock
+    case socketPathTooLong
     case connectFailed(errno: Int32)
     case timeout
     case malformedResponse
@@ -40,6 +41,8 @@ extension AgentError: LocalizedError {
         switch self {
         case .noAuthSock:
             return "SSH_AUTH_SOCK is not set"
+        case .socketPathTooLong:
+            return "SSH_AUTH_SOCK path is too long for a Unix domain socket"
         case .connectFailed(let errno):
             return "Could not connect to ssh-agent (\(String(cString: strerror(errno))))"
         case .timeout:

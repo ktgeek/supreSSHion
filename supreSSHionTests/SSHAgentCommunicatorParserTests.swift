@@ -70,6 +70,21 @@ final class SSHAgentCommunicatorParserTests: XCTestCase {
         XCTAssertEqual(keys?.count, 0)
     }
 
+    func testNonUTF8CommentDecodesLossilyInsteadOfDroppingTheKey() throws {
+        let blob = FakeAgentResponse.validBlob(type: "ssh-ed25519")
+        let invalidUTF8Comment = Data([0xFF, 0xFE, 0x41]) // invalid leading bytes, then 'A'
+        let entries = FakeAgentResponse.lengthPrefixed(blob) + FakeAgentResponse.lengthPrefixed(invalidUTF8Comment)
+        let response = FakeAgentResponse.identitiesAnswer(nKeys: 1, entries: entries)
+
+        let agent = try FakeSSHAgent()
+        agent.respondOnce(with: response)
+        let keys = try? SSHAgentCommunicator(socketPath: agent.socketPath).getLoadedKeys().get()
+
+        XCTAssertEqual(keys?.count, 1)
+        XCTAssertTrue(keys?.first?.comment.contains("\u{FFFD}") ?? false,
+                       "expected a lossy replacement character, got \(keys?.first?.comment ?? "nil")")
+    }
+
     // MARK: - H1 regressions
 
     func testOversizedEmbeddedTypeLengthReturnsNilNotCrash() throws {

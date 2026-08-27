@@ -27,6 +27,7 @@
 		5CE570000000000000000202 /* AgentError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000201 /* AgentError.swift */; };
 		5CE570000000000000000204 /* NotificationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE570000000000000000203 /* NotificationPresenter.swift */; };
 		5CE57000000000000000010C /* SSHAgentCommunicatorBatchRemovalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE57000000000000000010B /* SSHAgentCommunicatorBatchRemovalTests.swift */; };
+		5CE57000000000000000010E /* SSHAgentCommunicatorConnectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE57000000000000000010D /* SSHAgentCommunicatorConnectionTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,7 @@
 		5CE570000000000000000201 /* AgentError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentError.swift; sourceTree = "<group>"; };
 		5CE570000000000000000203 /* NotificationPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPresenter.swift; sourceTree = "<group>"; };
 		5CE57000000000000000010B /* SSHAgentCommunicatorBatchRemovalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHAgentCommunicatorBatchRemovalTests.swift; sourceTree = "<group>"; };
+		5CE57000000000000000010D /* SSHAgentCommunicatorConnectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHAgentCommunicatorConnectionTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,6 +136,7 @@
 				5CE570000000000000000107 /* FakeSSHAgent.swift */,
 				5CE570000000000000000109 /* SSHAgentCommunicatorParserTests.swift */,
 				5CE57000000000000000010B /* SSHAgentCommunicatorBatchRemovalTests.swift */,
+				5CE57000000000000000010D /* SSHAgentCommunicatorConnectionTests.swift */,
 			);
 			path = supreSSHionTests;
 			sourceTree = "<group>";
@@ -269,6 +272,7 @@
 				5CE570000000000000000108 /* FakeSSHAgent.swift in Sources */,
 				5CE57000000000000000010A /* SSHAgentCommunicatorParserTests.swift in Sources */,
 				5CE57000000000000000010C /* SSHAgentCommunicatorBatchRemovalTests.swift in Sources */,
+				5CE57000000000000000010E /* SSHAgentCommunicatorConnectionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
