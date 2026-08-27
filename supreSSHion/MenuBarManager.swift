@@ -134,6 +134,7 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
         stateItem?.title = supervisor.supressionState.statusMessage
         keysItem?.title = supervisor.keysLoadedMessage
         keysItem?.isEnabled = supervisor.loadedKeysCount > 0
+        keysItem?.toolTip = supervisor.lastError?.localizedDescription
         resumeItem?.isHidden = !supervisor.supressionState.isDisabled
     }
 

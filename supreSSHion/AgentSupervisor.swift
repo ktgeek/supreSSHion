@@ -34,6 +34,11 @@ class AgentSupervisor : NSObject {
     var loadedKeysCount: Int = 0
     var exemptLoadedKeysCount: Int = 0
     var loadedKeys: [SSHKey] = []
+    // Reflects the outcome of the most recent attempt to reach ssh-agent
+    // (refreshKeysCount()/fetchLoadedKeys()), so the UI can distinguish
+    // "the agent has no keys loaded" from "the agent could not be reached"
+    // instead of both reading as zero keys.
+    var lastError: AgentError?
 
     init(state: SupresshionState, exemptions: ExemptionStore = ExemptionStore()) {
         supressionState = state
@@ -152,18 +157,33 @@ class AgentSupervisor : NSObject {
 
     func refreshKeysCount() {
         let communicator = SSHAgentCommunicator()
-        let rawKeys = (try? communicator.getLoadedKeys().get()) ?? []
-        loadedKeysCount = rawKeys.count
-        exemptLoadedKeysCount = rawKeys.filter { exemptions.isExempt(fingerprint: $0.fingerprint) }.count
-        let implyDialog = loadedKeysCount == 0 ? "" : "…"
-        let plural = loadedKeysCount == 1 ? "" : "s"
-        let exemptClause = exemptLoadedKeysCount == 0 ? "" : " (\(exemptLoadedKeysCount) exempt)"
-        keysLoadedMessage = "\(loadedKeysCount) key\(plural) loaded\(exemptClause)\(implyDialog)"
+        switch communicator.getLoadedKeys() {
+        case .success(let rawKeys):
+            lastError = nil
+            loadedKeysCount = rawKeys.count
+            exemptLoadedKeysCount = rawKeys.filter { exemptions.isExempt(fingerprint: $0.fingerprint) }.count
+            let implyDialog = loadedKeysCount == 0 ? "" : "…"
+            let plural = loadedKeysCount == 1 ? "" : "s"
+            let exemptClause = exemptLoadedKeysCount == 0 ? "" : " (\(exemptLoadedKeysCount) exempt)"
+            keysLoadedMessage = "\(loadedKeysCount) key\(plural) loaded\(exemptClause)\(implyDialog)"
+        case .failure(let error):
+            lastError = error
+            loadedKeysCount = 0
+            exemptLoadedKeysCount = 0
+            keysLoadedMessage = "Cannot reach ssh-agent"
+        }
     }
 
     func fetchLoadedKeys() {
         let communicator = SSHAgentCommunicator()
-        loadedKeys = (try? communicator.getLoadedKeys().get()) ?? []
+        switch communicator.getLoadedKeys() {
+        case .success(let keys):
+            lastError = nil
+            loadedKeys = keys
+        case .failure(let error):
+            lastError = error
+            loadedKeys = []
+        }
     }
 
     func removeSelectedKeys(_ keys: [SSHKey]) {
