@@ -20,6 +20,12 @@ xcodebuild -scheme supreSSHion -configuration Debug -destination 'platform=macOS
 
 No linting tools, and no external dependencies (no CocoaPods/SPM/Carthage).
 
+Minimum deployment target is macOS 15.0 (Sequoia), set on both the project and the app target so
+the two can't drift again. The app target builds in Swift 6 language mode
+(`SWIFT_STRICT_CONCURRENCY = complete` under Swift 6). `supreSSHionTests` stays on Swift 5 language
+mode — a Swift 5 test target importing and testing a Swift 6 app module is a normal, supported
+configuration, so there's no need to migrate both at once.
+
 ## Architecture
 
 Components with a clear layering:
@@ -56,7 +62,7 @@ The project is pure Swift — no Objective-C, no bridging header. There is no `A
 
 - `com.apple.screenIsLocked` and `com.apple.screenIsUnlocked` are **undocumented** macOS distributed notifications — handle carefully.
 - System sleep (`willSleepNotification`) **always re-enables** key removal, overriding any active disable timer. This is intentional.
-- The app has no sandbox restrictions (entitlements file is empty), which is required for Unix socket access to ssh-agent.
+- The app has no sandbox restrictions and no entitlements file at all, which is required for Unix socket access to ssh-agent.
 - Exemptions are honored only by *automatic* removal (screen lock, disable-timer expiry via `AgentSupervisor.removeUnexemptedKeys()`). Every user-initiated removal — the menu's "Remove All Keys", the Keys window's "Remove All" button — is a true wipe that ignores exemptions; only the exemption *entries* persist across it, not the keys themselves.
 - App termination (menu Quit, ⌘Q, `killall`/SIGTERM/SIGINT/SIGHUP) removes unexempted keys via `AgentSupervisor.removeKeysOnTermination()`, **regardless of the disable state** — this is intentional, so disabling removal can't be used to make quitting a safe way to leave keys loaded. `SIGKILL`, Force Quit, and crashes cannot be intercepted; this is a known, documented limitation, not a bug to fix.
 

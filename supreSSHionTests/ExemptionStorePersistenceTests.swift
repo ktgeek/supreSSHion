@@ -23,6 +23,7 @@
 import XCTest
 @testable import supreSSHion
 
+@MainActor
 final class ExemptionStorePersistenceTests: XCTestCase {
     private var tempDir: URL!
     private var fileURL: URL!

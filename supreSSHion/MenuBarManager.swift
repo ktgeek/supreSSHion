@@ -22,6 +22,7 @@
 
 import Cocoa
 
+@MainActor
 class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let supervisor = AgentSupervisor(state: SupresshionState())

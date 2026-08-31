@@ -24,6 +24,7 @@ import Foundation
 import Observation
 
 @Observable
+@MainActor
 final class ExemptionStore {
     private struct ExemptionFile: Codable {
         var version: Int
