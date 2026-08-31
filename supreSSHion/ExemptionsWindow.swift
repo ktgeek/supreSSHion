@@ -29,6 +29,12 @@ private struct ExemptionsView: View {
     @State private var newFingerprint: String = ""
     @State private var newLabel: String = ""
     @State private var errorMessage: String?
+    // In-progress label text, keyed by fingerprint, while a row's field has
+    // focus. Keeping this local rather than writing through to the store on
+    // every keystroke is what stops the row from re-sorting itself out from
+    // under the cursor mid-edit; see commitLabel(for:).
+    @State private var editingLabels: [String: String] = [:]
+    @FocusState private var focusedFingerprint: String?
 
     private var loadedFingerprints: Set<String> {
         Set(supervisor.loadedKeys.map { $0.fingerprint })
@@ -42,11 +48,10 @@ private struct ExemptionsView: View {
                 }
                 .width(min: 100, ideal: 360)
                 TableColumn("Label") { exemption in
-                    TextField("", text: Binding(
-                        get: { exemption.label },
-                        set: { supervisor.exemptions.setLabel($0, for: exemption.fingerprint) }
-                    ))
-                    .textFieldStyle(.plain)
+                    TextField("", text: labelBinding(for: exemption))
+                        .textFieldStyle(.plain)
+                        .focused($focusedFingerprint, equals: exemption.fingerprint)
+                        .onSubmit { commitLabel(for: exemption.fingerprint) }
                 }
                 .width(min: 80, ideal: 180)
                 TableColumn("Loaded") { exemption in
@@ -57,6 +62,15 @@ private struct ExemptionsView: View {
                 .width(50)
             }
             .frame(minHeight: 160)
+            // Focus leaving a row (Tab, clicking elsewhere, closing the
+            // window) commits that row's edit, same as Return does via
+            // onSubmit above - a label typed and then tabbed away from
+            // must not be silently discarded.
+            .onChange(of: focusedFingerprint) { oldValue, newValue in
+                if let oldValue, oldValue != newValue {
+                    commitLabel(for: oldValue)
+                }
+            }
 
             Divider()
 
@@ -82,7 +96,7 @@ private struct ExemptionsView: View {
             HStack {
                 Spacer()
                 Button("Remove Selected") {
-                    for fingerprint in selectedIDs { supervisor.exemptions.unexempt(fingerprint: fingerprint) }
+                    supervisor.exemptions.unexempt(fingerprints: selectedIDs)
                     selectedIDs = []
                     supervisor.refresh()
                 }
@@ -92,6 +106,19 @@ private struct ExemptionsView: View {
             }
             .padding(8)
         }
+    }
+
+    private func labelBinding(for exemption: KeyExemption) -> Binding<String> {
+        Binding(
+            get: { editingLabels[exemption.fingerprint] ?? exemption.label },
+            set: { editingLabels[exemption.fingerprint] = $0 }
+        )
+    }
+
+    private func commitLabel(for fingerprint: String) {
+        guard let newValue = editingLabels[fingerprint] else { return }
+        editingLabels[fingerprint] = nil
+        supervisor.exemptions.setLabel(newValue, for: fingerprint)
     }
 
     private func addExemption() {

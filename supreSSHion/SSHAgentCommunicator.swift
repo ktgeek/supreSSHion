@@ -97,6 +97,12 @@ class SSHAgentCommunicator {
         var addr = sockaddr_un()
         addr.sun_family = sa_family_t(AF_UNIX)
         let pathCapacity = MemoryLayout.size(ofValue: addr.sun_path)
+        // sun_path also needs room for a trailing NUL, so the path itself
+        // can use at most pathCapacity - 1 bytes. Without this check,
+        // strncpy below silently truncates an over-long path and connects
+        // to whatever (wrong) socket that truncated path names, with no
+        // diagnostic at all.
+        guard socketPath.utf8.count < pathCapacity else { throw AgentError.socketPathTooLong }
         _ = withUnsafeMutableBytes(of: &addr.sun_path) { rawBuffer in
             socketPath.withCString { strncpy(rawBuffer.baseAddress?.assumingMemoryBound(to: CChar.self), $0, pathCapacity) }
         }
@@ -122,11 +128,30 @@ class SSHAgentCommunicator {
         return fd
     }
 
-    private func sendCommand(_ cmd: UInt8, to fd: Int32) {
+    private func sendCommand(_ cmd: UInt8, to fd: Int32) throws {
         var buf = Data(count: 5)
         withUnsafeBytes(of: UInt32(1).bigEndian) { buf.replaceSubrange(0..<4, with: $0) }
         buf[4] = cmd
-        _ = buf.withUnsafeBytes { Darwin.send(fd, $0.baseAddress!, 5, 0) }
+        try sendAll(fd, buf)
+    }
+
+    // A short write here would desync the protocol - the agent would be
+    // left expecting the rest of a frame that never arrives. send() can
+    // legitimately write fewer bytes than requested, so this loops until
+    // every byte is sent (or the socket errors/times out) rather than
+    // discarding the return value the way a single send() call did before.
+    private func sendAll(_ fd: Int32, _ data: Data) throws {
+        var totalSent = 0
+        try data.withUnsafeBytes { raw in
+            while totalSent < data.count {
+                let n = Darwin.send(fd, raw.baseAddress!.advanced(by: totalSent), data.count - totalSent, 0)
+                guard n > 0 else {
+                    if n < 0, errno == EAGAIN || errno == EWOULDBLOCK { throw AgentError.timeout }
+                    throw AgentError.malformedResponse
+                }
+                totalSent += n
+            }
+        }
     }
 
     // Timeout is detected via errno after a short/failed recv: SO_RCVTIMEO
@@ -178,7 +203,7 @@ class SSHAgentCommunicator {
         buf[4] = SSHAgentCommunicator.SSH_AGENTC_REMOVE_IDENTITY
         withUnsafeBytes(of: UInt32(blob.count).bigEndian) { buf.replaceSubrange(5..<9, with: $0) }
         buf.replaceSubrange(9..<9+blob.count, with: blob)
-        _ = buf.withUnsafeBytes { Darwin.send(fd, $0.baseAddress!, 4 + payloadLen, 0) }
+        try sendAll(fd, buf)
         let resp = try recvAll(fd, count: 5)
         let len = UInt32(bigEndian: resp.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
         guard len == 1, resp[4] == SSHAgentCommunicator.SSH_AGENT_SUCCESS else {
@@ -192,7 +217,7 @@ class SSHAgentCommunicator {
     func removeKeys() -> Result<Void, AgentError> {
         run {
             try withConnection { fd in
-                sendCommand(SSHAgentCommunicator.SSH_AGENTC_REMOVE_ALL_IDENTITIES, to: fd)
+                try sendCommand(SSHAgentCommunicator.SSH_AGENTC_REMOVE_ALL_IDENTITIES, to: fd)
                 let resp = try recvAll(fd, count: 5)
                 let len = UInt32(bigEndian: resp.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
                 guard len == 1, resp[4] == SSHAgentCommunicator.SSH_AGENT_SUCCESS else {
@@ -238,7 +263,7 @@ class SSHAgentCommunicator {
     func getLoadedKeys() -> Result<[SSHKey], AgentError> {
         run {
             try withConnection { fd in
-                sendCommand(SSHAgentCommunicator.SSH_AGENTC_REQUEST_IDENTITIES, to: fd)
+                try sendCommand(SSHAgentCommunicator.SSH_AGENTC_REQUEST_IDENTITIES, to: fd)
 
                 let header = try recvAll(fd, count: 5)
                 let msgLen = UInt32(bigEndian: header.withUnsafeBytes { $0.loadUnaligned(as: UInt32.self) })
@@ -296,11 +321,14 @@ class SSHAgentCommunicator {
                         NSLog("Malformed identities response from agent (invalid key type length)")
                         throw AgentError.malformedResponse
                     }
-                    // A non-UTF8 type string is tolerated as empty for now -
-                    // decode failures are a separate, lower-severity concern
-                    // from bounds safety.
-                    let keyType = String(bytes: typeBytes, encoding: .utf8) ?? ""
-                    let commentString = String(bytes: comment, encoding: .utf8) ?? ""
+                    // Decoded lossily rather than requiring strict UTF-8:
+                    // a non-UTF8 type or comment shouldn't make an
+                    // otherwise-valid key vanish from the list. Invalid
+                    // sequences become U+FFFD instead of dropping the
+                    // field to an empty string, so the user still sees
+                    // something identifying the key.
+                    let keyType = String(decoding: typeBytes, as: UTF8.self)
+                    let commentString = String(decoding: comment, as: UTF8.self)
 
                     keys.append(SSHKey(type: keyType, fingerprint: fingerprint, comment: commentString, keyBlob: Data(blob)))
                 }

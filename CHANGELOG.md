@@ -24,6 +24,10 @@ follow `MAJOR.MINOR` (no patch component unless a patch release is actually need
   list was treating that failure the same as "no keys are loaded," which could remove exempted
   keys it should have spared, or send a pointless removal request when the agent already held no
   keys.
+- Editing a label in Manage Exemptions wrote through to disk on every keystroke, which also
+  re-sorted the table by label after each character — so the row being edited would move out from
+  under the cursor mid-edit. Labels now commit on Return or when the field loses focus, like a
+  normal text field.
 
 ## [3.0] - 2026-08-15
 
