@@ -133,7 +133,7 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     func menuWillOpen(_ menu: NSMenu) {
-        supervisor.refreshKeysCount()
+        supervisor.refresh()
         stateItem?.title = supervisor.supressionState.statusMessage
         keysItem?.title = supervisor.keysLoadedMessage
         keysItem?.isEnabled = supervisor.loadedKeysCount > 0
@@ -146,7 +146,7 @@ class MenuBarManager: NSObject, NSApplicationDelegate, NSMenuDelegate {
     @objc private func timeAction(_ sender: NSMenuItem) { supervisor.disable(forInterval: TimeInterval(sender.tag)) }
     @objc private func removeSSHKeysAction() { supervisor.removeKeysNow() }
     @objc private func showKeysAction() {
-        supervisor.fetchLoadedKeys()
+        // KeysWindow.showWindow already calls supervisor.refresh().
         keysWindow.showWindow(nil)
     }
     @objc private func showExemptionsAction() { exemptionsWindow.showWindow(nil) }

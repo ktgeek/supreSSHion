@@ -84,11 +84,11 @@ private struct ExemptionsView: View {
                 Button("Remove Selected") {
                     for fingerprint in selectedIDs { supervisor.exemptions.unexempt(fingerprint: fingerprint) }
                     selectedIDs = []
-                    supervisor.refreshKeysCount()
+                    supervisor.refresh()
                 }
                 .disabled(selectedIDs.isEmpty)
 
-                Button("Refresh") { supervisor.fetchLoadedKeys() }
+                Button("Refresh") { supervisor.refresh() }
             }
             .padding(8)
         }
@@ -100,7 +100,7 @@ private struct ExemptionsView: View {
             return
         }
         supervisor.exemptions.exempt(fingerprint: fingerprint, label: newLabel)
-        supervisor.refreshKeysCount()
+        supervisor.refresh()
         newFingerprint = ""
         newLabel = ""
         errorMessage = nil
@@ -125,7 +125,7 @@ class ExemptionsWindow: NSWindowController, NSWindowDelegate {
     required init?(coder: NSCoder) { fatalError("init(coder:) not supported") }
 
     override func showWindow(_ sender: Any?) {
-        supervisor.fetchLoadedKeys()
+        supervisor.refresh()
         if !(window?.isVisible ?? false) {
             window?.setContentSize(NSSize(width: 760, height: 300))
             window?.center()
